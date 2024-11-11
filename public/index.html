@@ -132,6 +132,29 @@
     .home-section.hidden {
       display: none;
     }
+
+    /* Error Notification Styles */
+    #errorNotification {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #f44336; /* Red for error */
+      color: white;
+      padding: 20px;
+      border-radius: 5px;
+      z-index: 1000;
+      display: none;
+    }
+
+    #errorNotification button {
+      background-color: #fff;
+      color: #f44336;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -399,6 +422,11 @@
       </button>
     </div>
 
+    <div id="errorNotification" v-show="showError">
+      <p>{{ errorMessage }}</p>
+      <button @click="closeErrorNotification">Close</button>
+    </div> 
+
   </div>
 
   <script>
@@ -450,6 +478,8 @@
         animeUrl: null,
         currentAnime: {}, // Data for anime details
         showAnimeDetailsSection: false, // To control the visibility of the anime details section
+        showError: false, // Variable to control visibility of error notification
+        errorMessage: '', // Variable to store the error message
         showEpisodeList: false // To control the visibility of the episode list
       },
       mounted() {
@@ -480,6 +510,7 @@
               this.latestCompletedAnimes = data.data.latestCompletedAnimes;
             }
           } catch (error) {
+            this.showErrorNotification('Error fetching home data: ' + error.message);
             console.error('Error fetching data:', error);
           } finally {
             this.loading = false;
@@ -494,6 +525,7 @@
               this.suggestions = data.data.suggestions;
               this.showSuggestions = true;
             } catch (error) {
+              this.showErrorNotification('Error fetching suggestions: ' + error.message);
               console.error('Error fetching suggestions:', error);
             }
           } else {
@@ -522,6 +554,7 @@
                 this.hasSearchResults = true;
               }
             } catch (error) {
+              this.showErrorNotification('Error performing search: ' + error.message);
               console.error('Error fetching search results:', error);
             } finally {
               this.loading = false;
@@ -536,6 +569,7 @@
             // Handle the response data here
             // ...
           } catch (error) {
+            this.showErrorNotification('Error fetching producer animes: ' + error.message);
             console.error('Error fetching producer animes:', error);
           }
         },
@@ -547,6 +581,7 @@
             // Handle the response data here
             // ...
           } catch (error) {
+            this.showErrorNotification('Error fetching genre animes: ' + error.message);
             console.error('Error fetching genre animes:', error);
           }
         },
@@ -558,6 +593,7 @@
             // Handle the response data here
             // ...
           } catch (error) {
+            this.showErrorNotification('Error fetching category animes: ' + error.message);
             console.error('Error fetching category animes:', error);
           }
         },
@@ -570,6 +606,7 @@
               this.scheduledAnimes = data.data.scheduledAnimes;
             }
           } catch (error) {
+            this.showErrorNotification('Error fetching anime schedule: ' + error.message);
             console.error('Error fetching anime schedule:', error);
           }
         },
@@ -588,6 +625,7 @@
               }
             }
           } catch (error) {
+            this.showErrorNotification('Error fetching episode list: ' + error.message);
             console.error('Error fetching episode list:', error);
           }
         },
@@ -601,6 +639,7 @@
               this.showServers = true;
             }
           } catch (error) {
+            this.showErrorNotification('Error fetching episode servers: ' + error.message);
             console.error('Error fetching episode servers:', error);
           }
         },
@@ -618,6 +657,7 @@
               this.animeUrl = `${this.animeUrl}?${Object.entries(headers).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&')}`;
             }
           } catch (error) {
+            this.showErrorNotification('Error fetching episode sources: ' + error.message);
             console.error('Error fetching episode sources:', error);
           }
         },
@@ -625,9 +665,16 @@
           this.currentAnime = anime;
           this.showAnimeDetailsSection = true;
           this.showEpisodeList = false; // Ensure episode list is hidden when showing details
+        },
+        showErrorNotification(message) {
+          this.errorMessage = message;
+          this.showError = true;
+        },
+        closeErrorNotification() {
+          this.showError = false;
         }
       }
     });
   </script>
 </body>
-</html>
+</html> 
