@@ -1,150 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aniwatch Anime Details</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-    <style>
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aniwatch Anime Details</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
 
-        .anime-details-card {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            overflow: hidden;
-        }
+  .anime-details-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+  }
 
-        .anime-details-card img {
-            width: 100%;
-            height: 300px; /* Adjust the height as needed */
-            object-fit: cover;
-        }
+  .anime-details-card img {
+    width: 100%;
+    height: 300px; /* Adjust the height as needed */
+    object-fit: cover;
+  }
 
-        .anime-details-card .details {
-            padding: 15px;
-        }
+  .anime-details-card .details {
+    padding: 15px;
+  }
 
-        .anime-details-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
+  .anime-details-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
 
-        .anime-details-tag {
-            background-color: #f0f0f0;
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-    </style>
+  .anime-details-tag {
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  </style>
 </head>
 <body>
-    <div id="app" class="container">
-        <h1 class="text-3xl font-bold mb-4 text-center">Aniwatch Anime Details</h1>
+  <div id="app" class="container">
+    <h1 class="text-3xl font-bold mb-4 text-center">Aniwatch Anime Details</h1>
 
-        <div v-if="loading" class="text-center">
-            Loading Anime Details...
-        </div>
-
-        <div v-else-if="animeDetails" class="anime-details-card">
-            <img :src="animeDetails.anime[0].info.poster" alt="Anime Poster" v-if="animeDetails.anime[0].info.poster">
-
-            <div class="details">
-                <h2 class="text-2xl font-bold">{{ animeDetails.anime[0].info.name }}</h2>
-
-                <p v-if="animeDetails.anime[0].info.description">Description: {{ animeDetails.anime[0].info.description }}</p>
-                <p>Rating: {{ animeDetails.anime[0].info.stats.rating }}</p>
-                <p>Type: {{ animeDetails.anime[0].info.stats.type }}</p>
-                <p>Quality: {{ animeDetails.anime[0].info.stats.quality }}</p>
-                <p>Episode Count (Sub): {{ animeDetails.anime[0].info.stats.episodes.sub }}</p>
-                <p>Episode Count (Dub): {{ animeDetails.anime[0].info.stats.episodes.dub }}</p>
-
-                <div class="anime-details-tags" v-if="animeDetails.anime[0].moreInfo.genres">
-                    <span v-for="tag in animeDetails.anime[0].moreInfo.genres" :key="tag" class="anime-details-tag">
-                        {{ tag }}
-                    </span>
-                </div>
-
-                <p>Status: {{ animeDetails.anime[0].moreInfo.status }}</p>
-                <p>Aired: {{ animeDetails.anime[0].moreInfo.aired }}</p>
-                <p>Studios: {{ animeDetails.anime[0].moreInfo.studios }}</p>
-
-
-                <button @click="fetchEpisodeList(animeDetails.anime[0].info.id)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" v-if="animeDetails.anime[0].info.id">
-                    Watch now
-                </button>
-            </div>
-        </div>
-
-        <div v-else>
-            <p>No anime details found.</p>
-        </div>
+    <div v-if="loading" class="text-center">
+      Loading Anime Details...
     </div>
 
-    <script>
-        new Vue({
-            el: '#app',
-            data() {
-                return {
-                    loading: true,
-                    animeDetails: null,
-                    animeId: null,
-                    episodeList: null,
-                };
-            },
-            mounted() {
-                this.fetchAnimeDetails();
-            },
-            methods: {
-                fetchAnimeDetails() {
-                    this.animeId = new URLSearchParams(window.location.search).get('id');
-                    if (this.animeId) {
-                        fetch(`/api/v2/hianime/anime/${this.animeId}`, {
-                            headers: {
-                                // 'Authorization': 'YOUR_API_KEY' // Replace with your actual API key  
-                            }
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    this.animeDetails = data;
-                                    console.log(this.animeDetails);
-                                } else {
-                                    console.log('Could not fetch anime details.');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error fetching anime details:', error);
-                            })
-                            .finally(() => {
-                                this.loading = false;
-                            });
-                    }
-                },
-                async fetchEpisodeList(animeId) {
-                    try {
-                        const response = await fetch(`/api/v2/hianime/anime/${animeId}/episodes`, {
-                            headers: {
-                                // 'Authorization': 'YOUR_API_KEY' // Replace with your actual API key
-                            }
-                        });
-                        const data = await response.json();
-                        console.log(data);
-                        if (data.success) {
-                            this.episodeList = data.data;
-                            console.log(this.episodeList);
-                        }
-                    } catch (error) {
-                        console.error('Error fetching episode list:', error);
-                    }
-                },
-            },
-        });
-    </script>
+    <div v-else-if="animeDetails" class="anime-details-card">
+      <img :src="animeDetails.anime[0].info.poster" alt="Anime Poster" v-if="animeDetails.anime[0].info.poster">
+
+      <div class="details">
+        <h2 class="text-2xl font-bold">{{ animeDetails.anime[0].info.name }}</h2>
+
+        <p v-if="animeDetails.anime[0].info.jname">Japanese Name: {{ animeDetails.anime[0].info.jname }}</p>
+        <p v-if="animeDetails.anime[0].info.name">English Name: {{ animeDetails.anime[0].info.name }}</p>
+
+        <div class="anime-details-tags" v-if="animeDetails.anime[0].moreInfo.genres">
+          <span v-for="tag in animeDetails.anime[0].moreInfo.genres" :key="tag" class="anime-details-tag">
+            {{ tag }}
+          </span>
+        </div>
+
+        <p v-if="animeDetails.anime[0].info.description">Description: {{ animeDetails.anime[0].info.description }}</p>
+
+        <button @click="fetchEpisodeList(animeDetails.anime[0].info.id)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" v-if="animeDetails.anime[0].info.id">
+          Watch now
+        </button>
+      </div>
+    </div>
+
+    <div v-else>
+      <p>No anime details found.</p>
+    </div>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          loading: true,
+          animeDetails: null,
+          animeId: null,
+          episodeList: null,
+        };
+      },
+      mounted() {
+        this.fetchAnimeDetails();
+      },
+      methods: {
+        fetchAnimeDetails() {
+          this.animeId = new URLSearchParams(window.location.search).get('id');
+          if (this.animeId) {
+            fetch(`/api/v2/hianime/anime/${this.animeId}`, { // Use the correct API endpoint
+              headers: {
+                'Authorization': 'YOUR_API_KEY' // Replace with your actual API key
+              }
+            })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  this.animeDetails = data.data;
+                  console.log(this.animeDetails);
+                } else {
+                  console.log('Could not fetch anime details.');
+                }
+              })
+              .catch(error => {
+                console.error('Error fetching anime details:', error);
+              })
+              .finally(() => {
+                this.loading = false;
+              });
+          }
+        },
+         async fetchEpisodeList(animeId) {
+          try {
+            const response = await fetch(`/api/v2/hianime/anime/${animeId}/episodes`, { // Use the correct API endpoint
+              headers: {
+                'Authorization': 'YOUR_API_KEY' // Replace with your actual API key
+              }
+            });
+            const data = await response.json();
+            console.log(data);
+            if (data.success) {
+              this.episodeList = data.data;
+              console.log(this.episodeList);
+            }
+          } catch (error) {
+            console.error('Error fetching episode list:', error);
+          }
+        },
+      },
+    });
+  </script>
 </body>
 </html>
