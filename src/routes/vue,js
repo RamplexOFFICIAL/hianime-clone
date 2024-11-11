@@ -1,0 +1,2 @@
+<a :href="`/anime-details/${anime.id}`" target="_blank" class="anime-card">
+  </a>
