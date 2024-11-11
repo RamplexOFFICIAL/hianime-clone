@@ -21,7 +21,7 @@
 
   .anime-details-card img {
     width: 100%;
-    height: 300px; /* Adjust the height as needed */
+    height: 300px;
     object-fit: cover;
   }
 
@@ -52,24 +52,22 @@
     </div>
 
     <div v-else-if="animeDetails" class="anime-details-card">
-      <img :src="animeDetails.poster" alt="Anime Poster">
+      <img :src="animeDetails.poster || animeDetails.anime_cover_image_url" alt="Anime Poster">
       <div class="details">
-        <h2 class="text-2xl font-bold">{{ animeDetails.name }}</h2>
+        <h2 class="text-2xl font-bold">{{ animeDetails.name || animeDetails.anime_english_title }}</h2>
 
-        <p>Japanese Name: {{ animeDetails.jname }}</p>
-        <p>English Name: {{ animeDetails.name }}</p>
+        <p>Japanese Name: {{ animeDetails.jname || animeDetails.anime_japanese_title }}</p>
+        <p>English Name: {{ animeDetails.anime_english_title }}</p>
 
-        <p>Type: {{ animeDetails.type }}</p>
+        <p>Type: {{ animeDetails.type || animeDetails.anime_type }}</p>
 
         <div class="anime-details-genres">
-          <span v-for="genre in animeDetails.otherInfo" :key="genre" class="anime-details-genre">
+          <span v-for="genre in animeDetails.otherInfo || animeDetails.anime_genres" :key="genre" class="anime-details-genre">
             {{ genre }}
           </span>
         </div>
 
-
-        <p>Description: {{ animeDetails.description }}</p>
-
+        <p>Description: {{ animeDetails.description || animeDetails.anime_synopsis }}</p>
 
         <button @click="fetchEpisodeList(animeDetails.id)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Watch now
@@ -105,7 +103,6 @@
               .then(data => {
                 if (data.success) {
                   this.animeDetails = data.data;
-                  console.log(this.animeDetails);
                 } else {
                   console.log('Could not fetch anime details.');
                 }
@@ -118,14 +115,12 @@
               });
           }
         },
-         async fetchEpisodeList(animeId) {
+        async fetchEpisodeList(animeId) {
           try {
             const response = await fetch(`/api/v2/hianime/anime/${animeId}/episodes`);
             const data = await response.json();
-            console.log(data);
             if (data.success) {
               this.episodeList = data.data;
-              console.log(this.episodeList);
             }
           } catch (error) {
             console.error('Error fetching episode list:', error);
