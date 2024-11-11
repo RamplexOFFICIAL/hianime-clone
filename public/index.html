@@ -155,6 +155,72 @@
       border-radius: 3px;
       cursor: pointer;
     }
+
+
+    /* Watch Now Section Styles */
+    .watch-now-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .watch-now-section .left-side {
+      width: 30%;
+      flex-shrink: 0;
+    }
+
+    .watch-now-section .right-side {
+      width: 70%;
+    }
+
+    .watch-now-section .episode-list {
+      height: 400px; /* Set a fixed height for the episode list */
+      overflow-y: auto; /* Enable vertical scroll if content exceeds height */
+    }
+
+    .watch-now-section .servers-comments {
+      height: 200px;
+      overflow-y: auto;
+    }
+
+    .watch-now-section .servers-comments ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .watch-now-section .servers-comments li {
+      margin-bottom: 10px;
+    }
+
+    .watch-now-section .servers-comments .server-button {
+      background-color: #007bff;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .watch-now-section .video-player {
+      height: 500px;
+      overflow: hidden;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    /* Responsiveness for smaller screens */
+    @media (max-width: 768px) {
+      .watch-now-section {
+        flex-direction: column;
+      }
+      .watch-now-section .left-side {
+        width: 100%;
+      }
+      .watch-now-section .right-side {
+        width: 100%;
+        margin-top: 20px;
+      }
+    }
   </style>
 </head>
 <body>
