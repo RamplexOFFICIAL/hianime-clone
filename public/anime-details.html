@@ -97,7 +97,7 @@
         fetchAnimeDetails() {
           this.animeId = new URLSearchParams(window.location.search).get('id');
           if (this.animeId) {
-            fetch(`/api/v2/hianime/anime/${this.animeId}`)
+            fetch(`/api/v2/hianime/anime/${this.animeId}`) // Use the correct API endpoint
               .then(response => response.json())
               .then(data => {
                 if (data.success) {
