@@ -1,2 +1,27 @@
-<a :href="`/anime-details/${anime.id}`" target="_blank" class="anime-card">
-  </a>
+// Assuming you already have Vue Router installed
+
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import AnimeDetails from './components/AnimeDetails.vue'; // Your anime details component
+
+Vue.use(VueRouter);
+
+const routes = [
+  {
+    path: '/anime-details/:id', // Route for anime details
+    name: 'anime-details',
+    component: AnimeDetails,
+    props: true // Pass the anime ID (`id`) as a prop to the component
+  },
+  // Other routes...
+];
+
+const router = new VueRouter({
+  mode: 'history', // For cleaner URLs
+  routes
+});
+
+new Vue({
+  router,
+  // ... rest of your app setup
+}).$mount('#app');
