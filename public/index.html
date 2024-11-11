@@ -368,6 +368,17 @@
               this.loading = false;
             }
           }
+        },
+        async fetchProducerAnimes(producerName, page = 1) {
+          try {
+            const response = await fetch(`/api/v2/hianime/producer/${producerName}?page=${page}`);
+            const data = await response.json();
+            console.log(data);
+            // Handle the response data here
+            // ...
+          } catch (error) {
+            console.error('Error fetching producer animes:', error);
+          }
         }
       }
     });
