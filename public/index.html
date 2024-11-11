@@ -323,7 +323,21 @@
         <div v-show="showServers">
           <ul>
             <li v-for="(server, index) in episodeServers.sub" :key="index">
-              <button @click="selectServerAndPlay(server.serverId)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <button @click="selectServerAndPlay(server.serverId, 'sub')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                play on {{ server.serverName }}
+              </button>
+            </li>
+          </ul>
+          <ul>
+            <li v-for="(server, index) in episodeServers.dub" :key="index">
+              <button @click="selectServerAndPlay(server.serverId, 'dub')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                play on {{ server.serverName }}
+              </button>
+            </li>
+          </ul>
+          <ul>
+            <li v-for="(server, index) in episodeServers.raw" :key="index">
+              <button @click="selectServerAndPlay(server.serverId, 'raw')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 play on {{ server.serverName }}
               </button>
             </li>
@@ -533,21 +547,21 @@
             console.error('Error fetching episode servers:', error);
           }
         },
-        selectServerAndPlay(serverId) {
-          this.serverId = serverId;
-          const server = this.episodeServers.sub.find(s => s.serverId === serverId) || this.episodeServers.dub.find(s => s.serverId === serverId) || this.episodeServers.raw.find(s => s.serverId === serverId);
-          console.log(server);
-          if (server) {
-            switch (server.serverName) {
-              case "vidstreaming":
-                this.animeUrl = `https://www.vidstreaming.io/streaming.php?id=${this.episodeServers.episodeId}`;
-                break;
-              case "megacloud":
-                this.animeUrl = `https://mega.nz/#fm/${this.episodeServers.episodeId}`;
-                break;
-              default:
-                this.animeUrl = null;
+        async selectServerAndPlay(serverId, category) {
+          try {
+            this.serverId = serverId;
+            const response = await fetch(`/api/v2/hianime/episode/sources?animeEpisodeId=${this.episodeServers.episodeId}&server=hd-1&category=${category}`);
+            const data = await response.json();
+            console.log(data);
+            if (data.success) {
+              const sources = data.data.sources;
+              const headers = data.data.headers;
+              this.animeUrl = sources.find(source => source.isM3U8).url;
+              // Add headers for the iframe
+              this.animeUrl = `${this.animeUrl}?${Object.entries(headers).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&')}`;
             }
+          } catch (error) {
+            console.error('Error fetching episode sources:', error);
           }
         }
       }
