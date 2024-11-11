@@ -97,11 +97,7 @@
         fetchAnimeDetails() {
           this.animeId = new URLSearchParams(window.location.search).get('id');
           if (this.animeId) {
-            fetch(`/api/v2/hianime/anime/${this.animeId}`, { // Use the correct API endpoint
-              headers: {
-                'Authorization': 'YOUR_API_KEY' // Replace with your actual API key
-              }
-            })
+            fetch(`/api/v2/hianime/anime/${this.animeId}`) // Removed the headers section
               .then(response => response.json())
               .then(data => {
                 if (data.success) {
@@ -121,11 +117,7 @@
         },
          async fetchEpisodeList(animeId) {
           try {
-            const response = await fetch(`/api/v2/hianime/anime/${animeId}/episodes`, { // Use the correct API endpoint
-              headers: {
-                'Authorization': 'YOUR_API_KEY' // Replace with your actual API key
-              }
-            });
+            const response = await fetch(`/api/v2/hianime/anime/${animeId}/episodes`); // Removed the headers section
             const data = await response.json();
             console.log(data);
             if (data.success) {
