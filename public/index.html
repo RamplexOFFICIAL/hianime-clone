@@ -591,7 +591,13 @@
 
     <div class="section-3" :class="{ show: showSection3 }">
       <h2 class="text-center">Section 3</h2>
-      <p>This is the content of Section 3. You can customize this section with your desired content.</p>
+      <p>This is the content of Section 3. You
+         can customize this section with your desired content.</p>
+      <ul>
+        <li v-for="episode in episodesInSection3" :key="episode.number">
+          {{ episode.number }}. {{ episode.title }}
+        </li>
+      </ul>
       <button @click="showSection3 = false">Go Back</button>
     </div>
 
@@ -650,7 +656,8 @@
         errorMessage: '', // Variable to store the error message
         showEpisodeList: false, // To control the visibility of the episode list
         adminMode: false, // To control the visibility of the admin panel
-        showSection3: false // To control the visibility of Section 3
+        showSection3: false, // To control the visibility of Section 3
+        episodesInSection3: [] // Data property for the episodes in Section 3
       },
       mounted() {
         this.fetchData();
@@ -844,6 +851,15 @@
         },
         closeErrorNotification() {
           this.showError = false;
+        },
+        // Method to populate the episodes in Section 3
+        populateEpisodesInSection3() {
+          this.episodesInSection3 = [
+            { number: 1, title: 'The Beginning' },
+            { number: 2, title: 'The Journey Begins' },
+            { number: 3, title: 'A New Challenge' },
+            // ... add more episodes
+          ];
         }
       }
     });
