@@ -623,6 +623,13 @@
       },
       mounted() {
         this.fetchData();
+        this.$watch('showSection3', (val) => {
+          if (val) { // Show Section 3
+            this.$nextTick(() => {
+              this.populateEpisodesInSection3();
+            });
+          }
+        });
       },
       watch: {
         // no search query changes
@@ -815,6 +822,8 @@
         },
         // Method to populate the episodes in Section 3
         populateEpisodesInSection3() {
+          // You can fetch from API or use a hardcoded example for now
+          // Example using hardcoded data
           this.episodesInSection3 = [
             { number: 1, title: 'The Beginning' },
             { number: 2, title: 'The Journey Begins' },
