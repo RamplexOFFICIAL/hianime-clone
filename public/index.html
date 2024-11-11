@@ -335,7 +335,7 @@
 
       </div>
 
-      <div v-show="!loading && showEpisodeList" v-show="!showAnimeDetailsSection && !showAnimeDetailsSection">
+      <div v-show="!loading && showEpisodeList" v-show="!showAnimeDetailsSection"> 
         <section class="mb-8">
           <h2 class="text-2xl font-bold mb-2">Episodes for {{ currentAnimeName }}</h2>
           <ul>
@@ -389,7 +389,7 @@
               {{ genre }}
             </span>
           </div>
-          <button @click="fetchEpisodeList(currentAnime.id)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <button @click="showEpisodeList = true; showAnimeDetailsSection = false" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Watch Now
           </button>
         </div>
@@ -580,7 +580,7 @@
             console.log(data);
             if (data.success) {
               this.episodeList = data.data;
-              this.showEpisodeList = true;
+              this.showEpisodeList = true; // Show the episode list after fetching it
               this.showAnimeDetailsSection = false; // Hide the anime details when episodes are fetched
               const anime = this.searchResults.animes.find(a => a.id === animeId) || this.latestEpisodeAnimes.find(a => a.id === animeId) || this.spotlightAnimes.find(a => a.id === animeId) || this.top10Animes.today.find(a => a.id === animeId) || this.top10Animes.month.find(a => a.id === animeId) || this.top10Animes.week.find(a => a.id === animeId) || this.topAiringAnimes.find(a => a.id === animeId) || this.topUpcomingAnimes.find(a => a.id === animeId) || this.trendingAnimes.find(a => a.id === animeId) || this.mostPopularAnimes.find(a => a.id === animeId) || this.mostFavoriteAnimes.find(a => a.id === animeId) || this.latestCompletedAnimes.find(a => a.id === animeId);
               if (anime) {
