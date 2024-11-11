@@ -158,7 +158,7 @@
     </div>
 
 
-    <div class="home-section" :class="{ hidden: showAnimeDetailsSection }"> 
+    <div class="home-section" :class="{ hidden: showAnimeDetailsSection || showEpisodeList }"> 
       <div v-show="!loading && hasSearchResults" v-show="!showAnimeDetailsSection">
         <section class="mb-8">
           <h2 class="text-2xl font-bold mb-2">Search Results for "{{ searchQuery }}"</h2>
@@ -335,7 +335,7 @@
 
       </div>
 
-      <div v-show="!loading && showEpisodeList" v-show="!showAnimeDetailsSection">
+      <div v-show="!loading && showEpisodeList" v-show="!showAnimeDetailsSection && !showAnimeDetailsSection">
         <section class="mb-8">
           <h2 class="text-2xl font-bold mb-2">Episodes for {{ currentAnimeName }}</h2>
           <ul>
@@ -389,7 +389,7 @@
               {{ genre }}
             </span>
           </div>
-          <button @click="fetchEpisodeList(currentAnime.id); showAnimeDetailsSection = false" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <button @click="fetchEpisodeList(currentAnime.id)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Watch Now
           </button>
         </div>
@@ -449,7 +449,8 @@
         serverId: null,
         animeUrl: null,
         currentAnime: {}, // Data for anime details
-        showAnimeDetailsSection: false // To control the visibility of the anime details section
+        showAnimeDetailsSection: false, // To control the visibility of the anime details section
+        showEpisodeList: false // To control the visibility of the episode list
       },
       mounted() {
         this.fetchData();
@@ -580,6 +581,7 @@
             if (data.success) {
               this.episodeList = data.data;
               this.showEpisodeList = true;
+              this.showAnimeDetailsSection = false; // Hide the anime details when episodes are fetched
               const anime = this.searchResults.animes.find(a => a.id === animeId) || this.latestEpisodeAnimes.find(a => a.id === animeId) || this.spotlightAnimes.find(a => a.id === animeId) || this.top10Animes.today.find(a => a.id === animeId) || this.top10Animes.month.find(a => a.id === animeId) || this.top10Animes.week.find(a => a.id === animeId) || this.topAiringAnimes.find(a => a.id === animeId) || this.topUpcomingAnimes.find(a => a.id === animeId) || this.trendingAnimes.find(a => a.id === animeId) || this.mostPopularAnimes.find(a => a.id === animeId) || this.mostFavoriteAnimes.find(a => a.id === animeId) || this.latestCompletedAnimes.find(a => a.id === animeId);
               if (anime) {
                 this.currentAnimeName = anime.name;
@@ -622,6 +624,7 @@
         showAnimeDetails(anime) { // Method to show anime details
           this.currentAnime = anime;
           this.showAnimeDetailsSection = true;
+          this.showEpisodeList = false; // Ensure episode list is hidden when showing details
         }
       }
     });
