@@ -127,6 +127,11 @@
     .anime-details.show {
       display: block;
     }
+
+    /* Hide the home section when anime details are shown */
+    .home-section.hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -152,220 +157,224 @@
       Loading...
     </div>
 
-    <div v-show="!loading && hasSearchResults" v-show="!showAnimeDetailsSection">
-      <section class="mb-8">
-        <h2 class="text-2xl font-bold mb-2">Search Results for "{{ searchQuery }}"</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in searchResults.animes" :key="index">
-          <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
-            <img :src="anime.poster" alt="Anime Poster">
-            <div class="details">
-              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
-              <p>Type: {{ anime.type }}</p>
-              <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
-            </div>
-          </a>
-        </div>
-      </section>
-    </div>
 
-
-    <div v-show="!loading && !hasSearchResults" v-show="!showAnimeDetailsSection">
-      <section v-show="!loading" class="mb-8">
-        <h2 class="text-2xl font-bold mb-2">Latest Episodes</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in latestEpisodeAnimes" :key="index">
-          <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
-            <img :src="anime.poster" alt="Anime Poster">
-            <div class="details">
-              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
-              <p>Type: {{ anime.type }}</p>
-              <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
-            </div>
-          </a>
-        </div>
-      </section>
-
-      <section class="mb-8">
-        <h2 class="text-2xl font-bold mb-2">Spotlight Animes</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in spotlightAnimes" :key="index">
-          <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
-            <img :src="anime.poster" alt="Anime Poster">
-            <div class="details">
-              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
-              <p>{{ anime.description }}</p>
-              <div class="genre-list">
-                <span v-for="genre in anime.otherInfo" :key="genre" class="genre-item">
-                  {{ genre }}
-                </span>
+    <div class="home-section" :class="{ hidden: showAnimeDetailsSection }"> 
+      <div v-show="!loading && hasSearchResults" v-show="!showAnimeDetailsSection">
+        <section class="mb-8">
+          <h2 class="text-2xl font-bold mb-2">Search Results for "{{ searchQuery }}"</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in searchResults.animes" :key="index">
+            <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
+              <img :src="anime.poster" alt="Anime Poster">
+              <div class="details">
+                <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                <p>Type: {{ anime.type }}</p>
+                <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
               </div>
-              <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
-            </div>
-          </a>
-        </div>
-      </section>
+            </a>
+          </div>
+        </section>
+      </div>
 
-      <section class="mb-8">
-        <h2 class="text-2xl font-bold mb-4">Top 10 Animes</h2>
-        <div class="top-anime-charts">
-          <div class="top-anime-chart" v-for="(chart, index) in Object.keys(top10Animes)" :key="index">
-            <h3 class="text-xl font-bold mt-2 mb-2">{{ chart }}</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in top10Animes[chart]" :key="index">
-              <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
-                <img :src="anime.poster" alt="Anime Poster">
-                <div class="details">
-                  <h3 class="text-xl font-bold">{{ anime.name }}</h3>
-                  <p>Rank: {{ anime.rank }}</p>
-                  <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+
+      <div v-show="!loading && !hasSearchResults" v-show="!showAnimeDetailsSection">
+        <section v-show="!loading" class="mb-8">
+          <h2 class="text-2xl font-bold mb-2">Latest Episodes</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in latestEpisodeAnimes" :key="index">
+            <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
+              <img :src="anime.poster" alt="Anime Poster">
+              <div class="details">
+                <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                <p>Type: {{ anime.type }}</p>
+                <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <section class="mb-8">
+          <h2 class="text-2xl font-bold mb-2">Spotlight Animes</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in spotlightAnimes" :key="index">
+            <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
+              <img :src="anime.poster" alt="Anime Poster">
+              <div class="details">
+                <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                <p>{{ anime.description }}</p>
+                <div class="genre-list">
+                  <span v-for="genre in anime.otherInfo" :key="genre" class="genre-item">
+                    {{ genre }}
+                  </span>
                 </div>
-              </a>
+                <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <section class="mb-8">
+          <h2 class="text-2xl font-bold mb-4">Top 10 Animes</h2>
+          <div class="top-anime-charts">
+            <div class="top-anime-chart" v-for="(chart, index) in Object.keys(top10Animes)" :key="index">
+              <h3 class="text-xl font-bold mt-2 mb-2">{{ chart }}</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in top10Animes[chart]" :key="index">
+                <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
+                  <img :src="anime.poster" alt="Anime Poster">
+                  <div class="details">
+                    <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                    <p>Rank: {{ anime.rank }}</p>
+                    <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+                  </div>
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="mb-8">
-        <h2 class="text-2xl font-bold mb-4">Top Aired & Upcoming</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <h3 class="text-xl font-bold mb-2">Top Aired</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in topAiringAnimes" :key="index">
-              <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
-                <img :src="anime.poster" alt="Anime Poster">
-                <div class="details">
-                  <h3 class="text-xl font-bold">{{ anime.name }}</h3>
-                </div>
-              </a>
+        <section class="mb-8">
+          <h2 class="text-2xl font-bold mb-4">Top Aired & Upcoming</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 class="text-xl font-bold mb-2">Top Aired</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in topAiringAnimes" :key="index">
+                <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
+                  <img :src="anime.poster" alt="Anime Poster">
+                  <div class="details">
+                    <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                  </div>
+                </a>
+              </div>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2">Top Upcoming</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in topUpcomingAnimes" :key="index">
+                <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
+                  <img :src="anime.poster" alt="Anime Poster">
+                  <div class="details">
+                    <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                    <p>Duration: {{ anime.duration }}</p>
+                    <p>Type: {{ anime.type }}</p>
+                    <p>Rating: {{ anime.rating }}</p>
+                    <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+                  </div>
+                </a>
+              </div>
             </div>
           </div>
-          <div>
-            <h3 class="text-xl font-bold mb-2">Top Upcoming</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in topUpcomingAnimes" :key="index">
-              <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
-                <img :src="anime.poster" alt="Anime Poster">
-                <div class="details">
-                  <h3 class="text-xl font-bold">{{ anime.name }}</h3>
-                  <p>Duration: {{ anime.duration }}</p>
-                  <p>Type: {{ anime.type }}</p>
-                  <p>Rating: {{ anime.rating }}</p>
-                  <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
-                </div>
-              </a>
-            </div>
+        </section>
+
+        <section class="mb-8">
+          <h2 class="text-2xl font-bold mb-2">Trending Animes</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in trendingAnimes" :key="index">
+            <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
+              <img :src="anime.poster" alt="Anime Poster">
+              <div class="details">
+                <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                <p>Rank: {{ anime.rank }}</p>
+              </div>
+            </a>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="mb-8">
-        <h2 class="text-2xl font-bold mb-2">Trending Animes</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in trendingAnimes" :key="index">
-          <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
-            <img :src="anime.poster" alt="Anime Poster">
-            <div class="details">
-              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
-              <p>Rank: {{ anime.rank }}</p>
-            </div>
-          </a>
-        </div>
-      </section>
+        <section class="mb-8">
+          <h2 class="text-2xl font-bold mb-2">Most Popular Animes</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in mostPopularAnimes" :key="index">
+            <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
+              <img :src="anime.poster" alt="Anime Poster">
+              <div class="details">
+                <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                <p>Type: {{ anime.type }}</p>
+                <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+              </div>
+            </a>
+          </div>
+        </section>
 
-      <section class="mb-8">
-        <h2 class="text-2xl font-bold mb-2">Most Popular Animes</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in mostPopularAnimes" :key="index">
-          <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
-            <img :src="anime.poster" alt="Anime Poster">
-            <div class="details">
-              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
-              <p>Type: {{ anime.type }}</p>
-              <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
-            </div>
-          </a>
-        </div>
-      </section>
+        <section class="mb-8">
+          <h2 class="text-2xl font-bold mb-2">Most Favorite Animes</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in mostFavoriteAnimes" :key="index">
+            <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
+              <img :src="anime.poster" alt="Anime Poster">
+              <div class="details">
+                <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                <p>Type: {{ anime.type }}</p>
+                <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+              </div>
+            </a>
+          </div>
+        </section>
 
-      <section class="mb-8">
-        <h2 class="text-2xl font-bold mb-2">Most Favorite Animes</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in mostFavoriteAnimes" :key="index">
-          <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
-            <img :src="anime.poster" alt="Anime Poster">
-            <div class="details">
-              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
-              <p>Type: {{ anime.type }}</p>
-              <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
-            </div>
-          </a>
-        </div>
-      </section>
+        <section class="mb-8">
+          <h2 class="text-2xl font-bold mb-2">Latest Completed Animes</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in latestCompletedAnimes" :key="index">
+            <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
+              <img :src="anime.poster" alt="Anime Poster">
+              <div class="details">
+                <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                <p>Type: {{ anime.type }}</p>
+                <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+              </div>
+            </a>
+          </div>
+        </section>
 
-      <section class="mb-8">
-        <h2 class="text-2xl font-bold mb-2">Latest Completed Animes</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in latestCompletedAnimes" :key="index">
-          <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
-            <img :src="anime.poster" alt="Anime Poster">
-            <div class="details">
-              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
-              <p>Type: {{ anime.type }}</p>
-              <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
-            </div>
-          </a>
-        </div>
-      </section>
+        <section class="mb-8">
+          <h2 class="text-2xl font-bold mb-2">Anime Schedule</h2>
+          <div class="mb-4">
+            <input type="date" v-model="scheduleDate" @change="fetchAnimeSchedule" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300">
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in scheduledAnimes" :key="index">
+            <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
+              <div class="details">
+                <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                <p>Time: {{ anime.time }}</p>
+                <p>Airing Timestamp: {{ anime.airingTimestamp }}</p>
+                <p>Seconds Until Airing: {{ anime.secondsUntilAiring }}</p>
+              </div>
+            </a>
+          </div>
+        </section>
 
-      <section class="mb-8">
-        <h2 class="text-2xl font-bold mb-2">Anime Schedule</h2>
-        <div class="mb-4">
-          <input type="date" v-model="scheduleDate" @change="fetchAnimeSchedule" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300">
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in scheduledAnimes" :key="index">
-          <a href="#" @click="showAnimeDetails(anime)" class="anime-card">
-            <div class="details">
-              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
-              <p>Time: {{ anime.time }}</p>
-              <p>Airing Timestamp: {{ anime.airingTimestamp }}</p>
-              <p>Seconds Until Airing: {{ anime.secondsUntilAiring }}</p>
-            </div>
-          </a>
-        </div>
-      </section>
+      </div>
 
+      <div v-show="!loading && showEpisodeList" v-show="!showAnimeDetailsSection">
+        <section class="mb-8">
+          <h2 class="text-2xl font-bold mb-2">Episodes for {{ currentAnimeName }}</h2>
+          <ul>
+            <li v-for="(episode, index) in episodeList.episodes" :key="index">
+              <button @click="fetchEpisodeServers(episode.episodeId)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Play
+              </button>
+              {{ episode.number }}. {{ episode.title }}
+              <span v-if="episode.isFiller" class="text-red-500">(Filler)</span>
+            </li>
+          </ul>
+          <div v-show="showServers">
+            <ul>
+              <li v-for="(server, index) in episodeServers.sub" :key="index">
+                <button @click="selectServerAndPlay(server.serverId, 'sub')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  play on {{ server.serverName }}
+                </button>
+              </li>
+            </ul>
+            <ul>
+              <li v-for="(server, index) in episodeServers.dub" :key="index">
+                <button @click="selectServerAndPlay(server.serverId, 'dub')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  play on {{ server.serverName }}
+                </button>
+              </li>
+            </ul>
+            <ul>
+              <li v-for="(server, index) in episodeServers.raw" :key="index">
+                <button @click="selectServerAndPlay(server.serverId, 'raw')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  play on {{ server.serverName }}
+                </button>
+              </li>
+            </ul>
+            <iframe v-show="animeUrl" :src="animeUrl" width="800" height="600" frameborder="0"></iframe>
+          </div>
+        </section>
+      </div>
     </div>
-
-    <div v-show="!loading && showEpisodeList" v-show="!showAnimeDetailsSection">
-      <section class="mb-8">
-        <h2 class="text-2xl font-bold mb-2">Episodes for {{ currentAnimeName }}</h2>
-        <ul>
-          <li v-for="(episode, index) in episodeList.episodes" :key="index">
-            <button @click="fetchEpisodeServers(episode.episodeId)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Play
-            </button>
-            {{ episode.number }}. {{ episode.title }}
-            <span v-if="episode.isFiller" class="text-red-500">(Filler)</span>
-          </li>
-        </ul>
-        <div v-show="showServers">
-          <ul>
-            <li v-for="(server, index) in episodeServers.sub" :key="index">
-              <button @click="selectServerAndPlay(server.serverId, 'sub')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                play on {{ server.serverName }}
-              </button>
-            </li>
-          </ul>
-          <ul>
-            <li v-for="(server, index) in episodeServers.dub" :key="index">
-              <button @click="selectServerAndPlay(server.serverId, 'dub')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                play on {{ server.serverName }}
-              </button>
-            </li>
-          </ul>
-          <ul>
-            <li v-for="(server, index) in episodeServers.raw" :key="index">
-              <button @click="selectServerAndPlay(server.serverId, 'raw')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                play on {{ server.serverName }}
-              </button>
-            </li>
-          </ul>
-          <iframe v-show="animeUrl" :src="animeUrl" width="800" height="600" frameborder="0"></iframe>
-        </div>
-      </section>
-    </div>
+    
 
     <div v-show="showAnimeDetailsSection" class="anime-details show">
       <div class="flex">
