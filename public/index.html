@@ -63,8 +63,8 @@
       Loading...
     </div>
 
-    <div v-show="!loading" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="col-span-1">
+    <div v-show="!loading">
+      <section class="mb-8">
         <h2 class="text-2xl font-bold mb-2">Latest Episodes</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div v-for="(anime, index) in latestEpisodeAnimes" :key="index" class="anime-card">
@@ -76,9 +76,9 @@
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="col-span-2">
+      <section class="mb-8">
         <h2 class="text-2xl font-bold mb-2">Spotlight Animes</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div v-for="(anime, index) in spotlightAnimes" :key="index" class="anime-card">
@@ -95,52 +95,56 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
 
-    <h2 class="text-2xl font-bold mt-8 mb-4">Top 10 Animes</h2>
-    <div class="top-anime-charts">
-      <div v-for="(chart, index) in Object.keys(top10Animes)" :key="index" class="top-anime-chart">
-        <h3 class="text-xl font-bold mt-2 mb-2">{{ chart }}</h3>
-        <div v-for="(anime, index) in top10Animes[chart]" :key="index" class="anime-card">
-          <img :src="anime.poster" alt="Anime Poster">
-          <div class="details">
-            <h3 class="text-xl font-bold">{{ anime.name }}</h3>
-            <p>Rank: {{ anime.rank }}</p>
-            <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <h2 class="text-2xl font-bold mt-8 mb-4">Top Aired & Upcoming</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <h3 class="text-xl font-bold mb-2">Top Aired</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div v-for="(anime, index) in topAiringAnimes" :key="index" class="anime-card">
-            <img :src="anime.poster" alt="Anime Poster">
-            <div class="details">
-              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+      <section class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">Top 10 Animes</h2>
+        <div class="top-anime-charts">
+          <div v-for="(chart, index) in Object.keys(top10Animes)" :key="index" class="top-anime-chart">
+            <h3 class="text-xl font-bold mt-2 mb-2">{{ chart }}</h3>
+            <div v-for="(anime, index) in top10Animes[chart]" :key="index" class="anime-card">
+              <img :src="anime.poster" alt="Anime Poster">
+              <div class="details">
+                <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                <p>Rank: {{ anime.rank }}</p>
+                <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div>
-        <h3 class="text-xl font-bold mb-2">Top Upcoming</h3>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">Top Aired & Upcoming</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div v-for="(anime, index) in topUpcomingAnimes" :key="index" class="anime-card">
-            <img :src="anime.poster" alt="Anime Poster">
-            <div class="details">
-              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
-              <p>Duration: {{ anime.duration }}</p>
-              <p>Type: {{ anime.type }}</p>
-              <p>Rating: {{ anime.rating }}</p>
-              <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+          <div>
+            <h3 class="text-xl font-bold mb-2">Top Aired</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div v-for="(anime, index) in topAiringAnimes" :key="index" class="anime-card">
+                <img :src="anime.poster" alt="Anime Poster">
+                <div class="details">
+                  <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">Top Upcoming</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div v-for="(anime, index) in topUpcomingAnimes" :key="index" class="anime-card">
+                <img :src="anime.poster" alt="Anime Poster">
+                <div class="details">
+                  <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                  <p>Duration: {{ anime.duration }}</p>
+                  <p>Type: {{ anime.type }}</p>
+                  <p>Rating: {{ anime.rating }}</p>
+                  <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   </div>
 
