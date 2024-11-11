@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Aniwatch Anime Viewer</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
   <style>
     .container {
@@ -221,11 +222,40 @@
         margin-top: 20px;
       }
     }
+
+    /* Admin Modal Styles */
+    .admin-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none; /* Hidden by default */
+    }
+
+    .admin-modal-content {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+    }
+
+    .admin-modal-content h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
   <div id="app" class="container">
-    <h1 class="text-3xl font-bold mb-4 text-center">Aniwatch Anime Viewer</h1>
+    <div class="flex items-center mb-4">
+      <i class="material-icons text-gray-500 cursor-pointer" @click="adminMode = !adminMode">admin_panel_settings</i>
+      <h1 class="text-3xl font-bold ml-4 text-center">Aniwatch Anime Viewer</h1>
+    </div>
 
     <div class="mb-4 relative">
       <input type="text" v-model="searchQuery" placeholder="Search for anime..." class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300" @keyup.enter="performSearch" @input="fetchSuggestions">
@@ -493,6 +523,38 @@
       <button @click="closeErrorNotification">Close</button>
     </div> 
 
+    <div class="admin-modal" v-show="adminMode">
+      <div class="admin-modal-content">
+        <h2>Developer Features</h2>
+        <div class="mb-4">
+          <label for="api-key">API Key:</label>
+          <input type="text" id="api-key" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300">
+        </div>
+        <div class="mb-4">
+          <label for="endpoint">Endpoint:</label>
+          <input type="text" id="endpoint" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300">
+        </div>
+        <div class="mb-4">
+          <label for="request-type">Request Type:</label>
+          <select id="request-type" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label for="payload">Payload (JSON):</label>
+          <textarea id="payload" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"></textarea>
+        </div>
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Send Request
+        </button>
+        <div id="response-section">
+          <h3>Response</h3>
+          <pre id="response-content"></pre>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
@@ -546,7 +608,8 @@
         showAnimeDetailsSection: false, // To control the visibility of the anime details section
         showError: false, // Variable to control visibility of error notification
         errorMessage: '', // Variable to store the error message
-        showEpisodeList: false // To control the visibility of the episode list
+        showEpisodeList: false, // To control the visibility of the episode list
+        adminMode: false // To control the visibility of the admin panel
       },
       mounted() {
         this.fetchData();
@@ -680,7 +743,6 @@
           try {
             const response = await fetch(`/api/v2/hianime/anime/${animeId}/episodes`);
             const data = await response.json();
-            console.log(data);
             if (data.success) {
               this.episodeList = data.data;
               this.showEpisodeList = true; // Show the episode list after fetching it
@@ -732,6 +794,9 @@
           this.showAnimeDetailsSection = true;
           this.showEpisodeList = false; // Ensure episode list is hidden when showing details
         },
+        enableAdminMode() {
+          this.adminMode = !this.adminMode; // Toggle admin mode
+        },
         showErrorNotification(message) {
           this.errorMessage = message;
           this.showError = true;
@@ -743,4 +808,4 @@
     });
   </script>
 </body>
-</html> 
+</html>
