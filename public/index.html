@@ -248,6 +248,40 @@
       text-align: center;
       margin-bottom: 20px;
     }
+
+    /* New Styles for Section 3 */
+    .section-3 {
+      display: none; /* Hidden by default */
+      text-align: center;
+      padding: 20px;
+      background-color: #f0f0f0;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .section-3.show {
+      display: block;
+    }
+
+    .section-3 h2 {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .section-3 p {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .section-3 button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -277,7 +311,7 @@
     </div>
 
 
-    <div class="home-section" :class="{ hidden: showAnimeDetailsSection || showEpisodeList }"> 
+    <div class="home-section" :class="{ hidden: showAnimeDetailsSection || showEpisodeList || showSection3 }"> 
       <div v-show="!loading && hasSearchResults" v-show="!showAnimeDetailsSection">
         <section class="mb-8">
           <h2 class="text-2xl font-bold mb-2">Search Results for "{{ searchQuery }}"</h2>
@@ -508,7 +542,7 @@
               {{ genre }}
             </span>
           </div>
-          <button @click="showEpisodeList = true; showAnimeDetailsSection = false" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <button @click="showEpisodeList = true; showAnimeDetailsSection = false; showSection3 = true" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Watch Now
           </button>
         </div>
@@ -553,6 +587,12 @@
           <pre id="response-content"></pre>
         </div>
       </div>
+    </div>
+
+    <div class="section-3" :class="{ show: showSection3 }">
+      <h2 class="text-center">Section 3</h2>
+      <p>This is the content of Section 3. You can customize this section with your desired content.</p>
+      <button @click="showSection3 = false">Go Back</button>
     </div>
 
   </div>
@@ -609,7 +649,8 @@
         showError: false, // Variable to control visibility of error notification
         errorMessage: '', // Variable to store the error message
         showEpisodeList: false, // To control the visibility of the episode list
-        adminMode: false // To control the visibility of the admin panel
+        adminMode: false, // To control the visibility of the admin panel
+        showSection3: false // To control the visibility of Section 3
       },
       mounted() {
         this.fetchData();
