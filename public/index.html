@@ -311,7 +311,7 @@
     </div>
 
 
-    <div class="home-section" :class="{ hidden: showAnimeDetailsSection || showEpisodeList || showSection3 }"> 
+    <div class="home-section" :class="{ hidden: showAnimeDetailsSection || showSection3 }"> 
       <div v-show="!loading && hasSearchResults" v-show="!showAnimeDetailsSection">
         <section class="mb-8">
           <h2 class="text-2xl font-bold mb-2">Search Results for "{{ searchQuery }}"</h2>
@@ -488,44 +488,6 @@
 
       </div>
 
-      <div v-show="!loading && showEpisodeList" v-show="!showAnimeDetailsSection"> 
-        <section class="mb-8">
-          <h2 class="text-2xl font-bold mb-2">Episodes for {{ currentAnimeName }}</h2>
-          <ul>
-            <li v-for="(episode, index) in episodeList.episodes" :key="index">
-              <button @click="fetchEpisodeServers(episode.episodeId)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Play
-              </button>
-              {{ episode.number }}. {{ episode.title }}
-              <span v-if="episode.isFiller" class="text-red-500">(Filler)</span>
-            </li>
-          </ul>
-          <div v-show="showServers">
-            <ul>
-              <li v-for="(server, index) in episodeServers.sub" :key="index">
-                <button @click="selectServerAndPlay(server.serverId, 'sub')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  play on {{ server.serverName }}
-                </button>
-              </li>
-            </ul>
-            <ul>
-              <li v-for="(server, index) in episodeServers.dub" :key="index">
-                <button @click="selectServerAndPlay(server.serverId, 'dub')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  play on {{ server.serverName }}
-                </button>
-              </li>
-            </ul>
-            <ul>
-              <li v-for="(server, index) in episodeServers.raw" :key="index">
-                <button @click="selectServerAndPlay(server.serverId, 'raw')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  play on {{ server.serverName }}
-                </button>
-              </li>
-            </ul>
-            <iframe v-show="animeUrl" :src="animeUrl" width="800" height="600" frameborder="0"></iframe>
-          </div>
-        </section>
-      </div>
     </div>
     
 
@@ -794,7 +756,6 @@
             if (data.success) {
               this.episodeList = data.data;
               this.showEpisodeList = true; // Show the episode list after fetching it
-              this.showAnimeDetailsSection = false; // Hide the anime details when episodes are fetched
               const anime = this.searchResults.animes.find(a => a.id === animeId) || this.latestEpisodeAnimes.find(a => a.id === animeId) || this.spotlightAnimes.find(a => a.id === animeId) || this.top10Animes.today.find(a => a.id === animeId) || this.top10Animes.month.find(a => a.id === animeId) || this.top10Animes.week.find(a => a.id === animeId) || this.topAiringAnimes.find(a => a.id === animeId) || this.topUpcomingAnimes.find(a => a.id === animeId) || this.trendingAnimes.find(a => a.id === animeId) || this.mostPopularAnimes.find(a => a.id === animeId) || this.mostFavoriteAnimes.find(a => a.id === animeId) || this.latestCompletedAnimes.find(a => a.id === animeId);
               if (anime) {
                 this.currentAnimeName = anime.name;
