@@ -71,9 +71,9 @@
         <p>Description: {{ animeDetails.description }}</p>
 
 
-        <a :href="'anime-details.html?id=' + animeDetails.id" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button @click="fetchEpisodeList(animeDetails.id)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Watch now
-        </a> 
+        </button>
       </div>
     </div>
 
@@ -90,6 +90,7 @@
           loading: true,
           animeDetails: null,
           animeId: null,
+          episodeList: null,
         };
       },
       mounted() {
@@ -115,6 +116,19 @@
               .finally(() => {
                 this.loading = false;
               });
+          }
+        },
+         async fetchEpisodeList(animeId) {
+          try {
+            const response = await fetch(`/api/v2/hianime/anime/${animeId}/episodes`);
+            const data = await response.json();
+            console.log(data);
+            if (data.success) {
+              this.episodeList = data.data;
+              console.log(this.episodeList);
+            }
+          } catch (error) {
+            console.error('Error fetching episode list:', error);
           }
         },
       },
