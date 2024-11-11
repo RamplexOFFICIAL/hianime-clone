@@ -60,7 +60,11 @@
         <p v-if="animeDetails.jname">Japanese Name: {{ animeDetails.jname }}</p>
         <p v-if="animeDetails.name">English Name: {{ animeDetails.name }}</p>
 
-        <p v-if="animeDetails.type">Type: {{ animeDetails.type }}</p>
+        <p v-if="animeDetails.categories">Type: 
+          <span v-for="category in animeDetails.categories" :key="category" class="anime-details-genre">
+            {{ category }}
+          </span>
+        </p>
 
         <div class="anime-details-genres" v-if="animeDetails.otherInfo">
           <span v-for="genre in animeDetails.otherInfo" :key="genre" class="anime-details-genre">
