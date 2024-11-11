@@ -108,7 +108,7 @@
       <section class="mb-8">
         <h2 class="text-2xl font-bold mb-2">Search Results for "{{ searchQuery }}"</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in searchResults.animes" :key="index">
-          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+          <a :href="'anime-details/' + anime.id" target="_blank" class="anime-card">
             <img :src="anime.poster" alt="Anime Poster">
             <div class="details">
               <h3 class="text-xl font-bold">{{ anime.name }}</h3>
@@ -125,7 +125,7 @@
       <section v-show="!loading" class="mb-8">
         <h2 class="text-2xl font-bold mb-2">Latest Episodes</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in latestEpisodeAnimes" :key="index">
-          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+          <a :href="'anime-details/' + anime.id" target="_blank" class="anime-card">
             <img :src="anime.poster" alt="Anime Poster">
             <div class="details">
               <h3 class="text-xl font-bold">{{ anime.name }}</h3>
@@ -139,7 +139,7 @@
       <section class="mb-8">
         <h2 class="text-2xl font-bold mb-2">Spotlight Animes</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in spotlightAnimes" :key="index">
-          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+          <a :href="'anime-details/' + anime.id" target="_blank" class="anime-card">
             <img :src="anime.poster" alt="Anime Poster">
             <div class="details">
               <h3 class="text-xl font-bold">{{ anime.name }}</h3>
@@ -161,7 +161,7 @@
           <div class="top-anime-chart" v-for="(chart, index) in Object.keys(top10Animes)" :key="index">
             <h3 class="text-xl font-bold mt-2 mb-2">{{ chart }}</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in top10Animes[chart]" :key="index">
-              <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+              <a :href="'anime-details/' + anime.id" target="_blank" class="anime-card">
                 <img :src="anime.poster" alt="Anime Poster">
                 <div class="details">
                   <h3 class="text-xl font-bold">{{ anime.name }}</h3>
@@ -180,7 +180,7 @@
           <div>
             <h3 class="text-xl font-bold mb-2">Top Aired</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in topAiringAnimes" :key="index">
-              <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+              <a :href="'anime-details/' + anime.id" target="_blank" class="anime-card">
                 <img :src="anime.poster" alt="Anime Poster">
                 <div class="details">
                   <h3 class="text-xl font-bold">{{ anime.name }}</h3>
@@ -191,7 +191,7 @@
           <div>
             <h3 class="text-xl font-bold mb-2">Top Upcoming</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in topUpcomingAnimes" :key="index">
-              <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+              <a :href="'anime-details/' + anime.id" target="_blank" class="anime-card">
                 <img :src="anime.poster" alt="Anime Poster">
                 <div class="details">
                   <h3 class="text-xl font-bold">{{ anime.name }}</h3>
@@ -209,7 +209,7 @@
       <section class="mb-8">
         <h2 class="text-2xl font-bold mb-2">Trending Animes</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in trendingAnimes" :key="index">
-          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+          <a :href="'anime-details/' + anime.id" target="_blank" class="anime-card">
             <img :src="anime.poster" alt="Anime Poster">
             <div class="details">
               <h3 class="text-xl font-bold">{{ anime.name }}</h3>
@@ -222,7 +222,7 @@
       <section class="mb-8">
         <h2 class="text-2xl font-bold mb-2">Most Popular Animes</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in mostPopularAnimes" :key="index">
-          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+          <a :href="'anime-details/' + anime.id" target="_blank" class="anime-card">
             <img :src="anime.poster" alt="Anime Poster">
             <div class="details">
               <h3 class="text-xl font-bold">{{ anime.name }}</h3>
@@ -236,7 +236,7 @@
       <section class="mb-8">
         <h2 class="text-2xl font-bold mb-2">Most Favorite Animes</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in mostFavoriteAnimes" :key="index">
-          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+          <a :href="'anime-details/' + anime.id" target="_blank" class="anime-card">
             <img :src="anime.poster" alt="Anime Poster">
             <div class="details">
               <h3 class="text-xl font-bold">{{ anime.name }}</h3>
@@ -250,7 +250,7 @@
       <section class="mb-8">
         <h2 class="text-2xl font-bold mb-2">Latest Completed Animes</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in latestCompletedAnimes" :key="index">
-          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+          <a :href="'anime-details/' + anime.id" target="_blank" class="anime-card">
             <img :src="anime.poster" alt="Anime Poster">
             <div class="details">
               <h3 class="text-xl font-bold">{{ anime.name }}</h3>
@@ -267,7 +267,7 @@
           <input type="date" v-model="scheduleDate" @change="fetchAnimeSchedule" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300">
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in scheduledAnimes" :key="index">
-          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+          <a :href="'anime-details/' + anime.id" target="_blank" class="anime-card">
             <div class="details">
               <h3 class="text-xl font-bold">{{ anime.name }}</h3>
               <p>Time: {{ anime.time }}</p>
