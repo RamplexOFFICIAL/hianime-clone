@@ -53,14 +53,48 @@
     .top-anime-chart {
       width: calc(33.33% - 10px);
     }
+
+    /* Styling for the suggestions dropdown */
+    .suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      z-index: 100;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .suggestion {
+      padding: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .suggestion:hover {
+      background-color: #f0f0f0;
+    }
   </style>
 </head>
 <body>
   <div id="app" class="container">
     <h1 class="text-3xl font-bold mb-4 text-center">Aniwatch Anime Viewer</h1>
 
-    <div class="mb-4">
-      <input type="text" v-model="searchQuery" placeholder="Search for anime..." class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300">
+    <div class="mb-4 relative">
+      <input type="text" v-model="searchQuery" placeholder="Search for anime..." class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300" @input="fetchSuggestions">
+      <div v-show="showSuggestions" class="suggestions">
+        <div v-for="(suggestion, index) in suggestions" :key="index" class="suggestion" @click="selectSuggestion(suggestion)">
+          <img :src="suggestion.poster" alt="Anime Poster" class="w-12 h-16 mr-4">
+          <div>
+            <p class="font-bold">{{ suggestion.name }}</p>
+            <p class="text-xs text-gray-500">{{ suggestion.jname }}</p>
+            <p class="text-xs text-gray-500">{{ suggestion.moreInfo.join(', ') }}</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div v-show="loading" class="text-center">
@@ -250,7 +284,9 @@
           hasNextPage: false,
           searchQuery: '',
           searchFilters: {}
-        }
+        },
+        suggestions: [],
+        showSuggestions: false
       },
       mounted() {
         this.fetchData();
@@ -311,6 +347,29 @@
           } finally {
             this.loading = false;
           }
+        },
+        async fetchSuggestions() {
+          if (this.searchQuery.length > 2) {
+            try {
+              const response = await fetch(`/api/v2/hianime/search/suggestion?q=${this.searchQuery}`);
+              const data = await response.json();
+              console.log(data);
+              this.suggestions = data.data.suggestions;
+              this.showSuggestions = true;
+            } catch (error) {
+              console.error('Error fetching suggestions:', error);
+            }
+          } else {
+            this.suggestions = [];
+            this.showSuggestions = false;
+          }
+        },
+        selectSuggestion(suggestion) {
+          this.searchQuery = suggestion.name;
+          this.suggestions = [];
+          this.showSuggestions = false;
+          // You might want to trigger a search here
+          // this.fetchSearchResults();
         }
       }
     });
