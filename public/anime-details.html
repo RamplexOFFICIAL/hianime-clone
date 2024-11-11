@@ -3,105 +3,578 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aniwatch Anime Details</title>
+  <title>Aniwatch Anime Viewer</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css">
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
   <style>
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-  .anime-details-card {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    overflow: hidden;
-  }
+    .anime-card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      cursor: pointer; /* Add cursor to indicate clickable */
+      text-decoration: none; /* Remove default link underline */
+    }
 
-  .anime-details-card img {
-    width: 100%;
-    height: 300px; /* Adjust the height as needed */
-    object-fit: cover;
-  }
+    .anime-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
 
-  .anime-details-card .details {
-    padding: 15px;
-  }
+    .anime-card .details {
+      padding: 15px;
+    }
 
-  .anime-details-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 10px;
-  }
+    .genre-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
 
-  .anime-details-tag {
-    background-color: #f0f0f0;
-    padding: 5px 10px;
-    border-radius: 5px;
-  }
+    .genre-item {
+      background-color: #f0f0f0;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+
+    .top-anime-charts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .top-anime-chart {
+      width: calc(33.33% - 10px);
+    }
+
+    /* Styling for the suggestions dropdown */
+    .suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      z-index: 100;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .suggestion {
+      padding: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .suggestion:hover {
+      background-color: #f0f0f0;
+    }
+
+    .anime-details-card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .anime-details-card img {
+      width: 100%;
+      height: 300px; /* Adjust the height as needed */
+      object-fit: cover;
+    }
+
+    .anime-details-card .details {
+      padding: 15px;
+    }
+
+    .anime-details-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+
+    .anime-details-tag {
+      background-color: #f0f0f0;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
   <div id="app" class="container">
-    <h1 class="text-3xl font-bold mb-4 text-center">Aniwatch Anime Details</h1>
+    <h1 class="text-3xl font-bold mb-4 text-center">Aniwatch Anime Viewer</h1>
 
-    <div v-if="loading" class="text-center">
-      Loading Anime Details...
-    </div>
-
-    <div v-else-if="animeDetails" class="anime-details-card">
-      <img :src="animeDetails.anime[0].info.poster" alt="Anime Poster" v-if="animeDetails.anime[0].info.poster">
-
-      <div class="details">
-        <h2 class="text-2xl font-bold">{{ animeDetails.anime[0].info.name }}</h2>
-
-        <p v-if="animeDetails.anime[0].info.jname">Japanese Name: {{ animeDetails.anime[0].info.jname }}</p>
-        <p v-if="animeDetails.anime[0].info.name">English Name: {{ animeDetails.anime[0].info.name }}</p>
-
-        <div class="anime-details-tags" v-if="animeDetails.anime[0].moreInfo.genres">
-          <span v-for="tag in animeDetails.anime[0].moreInfo.genres" :key="tag" class="anime-details-tag">
-            {{ tag }}
-          </span>
+    <div class="mb-4 relative">
+      <input type="text" v-model="searchQuery" placeholder="Search for anime..." class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300" @keyup.enter="performSearch" @input="fetchSuggestions">
+      <div v-show="showSuggestions" class="suggestions">
+        <div v-for="(suggestion, index) in suggestions" :key="index" class="suggestion" @click="selectSuggestion(suggestion)">
+          <img :src="suggestion.poster" alt="Anime Poster" class="w-12 h-16 mr-4">
+          <div>
+            <p class="font-bold">{{ suggestion.name }}</p>
+            <p class="text-xs text-gray-500">{{ suggestion.jname }}</p>
+            <p class="text-xs text-gray-500">{{ suggestion.moreInfo.join(', ') }}</p>
+          </div>
         </div>
-
-        <p v-if="animeDetails.anime[0].info.description">Description: {{ animeDetails.anime[0].info.description }}</p>
-
-        <button @click="fetchEpisodeList(animeDetails.anime[0].info.id)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" v-if="animeDetails.anime[0].info.id">
-          Watch now
-        </button>
       </div>
     </div>
 
-    <div v-else>
-      <p>No anime details found.</p>
+
+    <div v-show="loading" class="text-center">
+      Loading...
+    </div>
+
+    <div v-show="!loading && hasSearchResults">
+      <section class="mb-8">
+        <h2 class="text-2xl font-bold mb-2">Search Results for "{{ searchQuery }}"</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in searchResults.animes" :key="index">
+          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+            <img :src="anime.poster" alt="Anime Poster">
+            <div class="details">
+              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+              <p>Type: {{ anime.type }}</p>
+              <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+            </div>
+          </a>
+        </div>
+      </section>
+    </div>
+
+
+    <div v-show="!loading && !hasSearchResults">
+      <section v-show="!loading" class="mb-8">
+        <h2 class="text-2xl font-bold mb-2">Latest Episodes</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in latestEpisodeAnimes" :key="index">
+          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+            <img :src="anime.poster" alt="Anime Poster">
+            <div class="details">
+              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+              <p>Type: {{ anime.type }}</p>
+              <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-bold mb-2">Spotlight Animes</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in spotlightAnimes" :key="index">
+          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+            <img :src="anime.poster" alt="Anime Poster">
+            <div class="details">
+              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+              <p>{{ anime.description }}</p>
+              <div class="genre-list">
+                <span v-for="genre in anime.otherInfo" :key="genre" class="genre-item">
+                  {{ genre }}
+                </span>
+              </div>
+              <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">Top 10 Animes</h2>
+        <div class="top-anime-charts">
+          <div class="top-anime-chart" v-for="(chart, index) in Object.keys(top10Animes)" :key="index">
+            <h3 class="text-xl font-bold mt-2 mb-2">{{ chart }}</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in top10Animes[chart]" :key="index">
+              <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+                <img :src="anime.poster" alt="Anime Poster">
+                <div class="details">
+                  <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                  <p>Rank: {{ anime.rank }}</p>
+                  <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">Top Aired & Upcoming</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h3 class="text-xl font-bold mb-2">Top Aired</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in topAiringAnimes" :key="index">
+              <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+                <img :src="anime.poster" alt="Anime Poster">
+                <div class="details">
+                  <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">Top Upcoming</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in topUpcomingAnimes" :key="index">
+              <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+                <img :src="anime.poster" alt="Anime Poster">
+                <div class="details">
+                  <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+                  <p>Duration: {{ anime.duration }}</p>
+                  <p>Type: {{ anime.type }}</p>
+                  <p>Rating: {{ anime.rating }}</p>
+                  <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-bold mb-2">Trending Animes</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in trendingAnimes" :key="index">
+          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+            <img :src="anime.poster" alt="Anime Poster">
+            <div class="details">
+              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+              <p>Rank: {{ anime.rank }}</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-bold mb-2">Most Popular Animes</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in mostPopularAnimes" :key="index">
+          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+            <img :src="anime.poster" alt="Anime Poster">
+            <div class="details">
+              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+              <p>Type: {{ anime.type }}</p>
+              <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-bold mb-2">Most Favorite Animes</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in mostFavoriteAnimes" :key="index">
+          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+            <img :src="anime.poster" alt="Anime Poster">
+            <div class="details">
+              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+              <p>Type: {{ anime.type }}</p>
+              <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-bold mb-2">Latest Completed Animes</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in latestCompletedAnimes" :key="index">
+          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+            <img :src="anime.poster" alt="Anime Poster">
+            <div class="details">
+              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+              <p>Type: {{ anime.type }}</p>
+              <p>Episodes: Sub - {{ anime.episodes.sub }}, Dub - {{ anime.episodes.dub }}</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-bold mb-2">Anime Schedule</h2>
+        <div class="mb-4">
+          <input type="date" v-model="scheduleDate" @change="fetchAnimeSchedule" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300">
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-for="(anime, index) in scheduledAnimes" :key="index">
+          <a :href="'anime-details.html?id=' + anime.id" target="_blank" class="anime-card">
+            <div class="details">
+              <h3 class="text-xl font-bold">{{ anime.name }}</h3>
+              <p>Time: {{ anime.time }}</p>
+              <p>Airing Timestamp: {{ anime.airingTimestamp }}</p>
+              <p>Seconds Until Airing: {{ anime.secondsUntilAiring }}</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+    </div>
+
+    <div v-show="!loading && showEpisodeList">
+      <section class="mb-8">
+        <h2 class="text-2xl font-bold mb-2">Episodes for {{ currentAnimeName }}</h2>
+        <ul>
+          <li v-for="(episode, index) in episodeList.episodes" :key="index">
+            <button @click="fetchEpisodeServers(episode.episodeId)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              Play
+            </button>
+            {{ episode.number }}. {{ episode.title }}
+            <span v-if="episode.isFiller" class="text-red-500">(Filler)</span>
+          </li>
+        </ul>
+        <div v-show="showServers">
+          <ul>
+            <li v-for="(server, index) in episodeServers.sub" :key="index">
+              <button @click="selectServerAndPlay(server.serverId, 'sub')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                play on {{ server.serverName }}
+              </button>
+            </li>
+          </ul>
+          <ul>
+            <li v-for="(server, index) in episodeServers.dub" :key="index">
+              <button @click="selectServerAndPlay(server.serverId, 'dub')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                play on {{ server.serverName }}
+              </button>
+            </li>
+          </ul>
+          <ul>
+            <li v-for="(server, index) in episodeServers.raw" :key="index">
+              <button @click="selectServerAndPlay(server.serverId, 'raw')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                play on {{ server.serverName }}
+              </button>
+            </li>
+          </ul>
+          <iframe v-show="animeUrl" :src="animeUrl" width="800" height="600" frameborder="0"></iframe>
+        </div>
+      </section>
     </div>
   </div>
 
   <script>
     new Vue({
       el: '#app',
-      data() {
-        return {
-          loading: true,
-          animeDetails: null,
-          animeId: null,
-          episodeList: null,
-        };
+      data: {
+        loading: true,
+        genres: [],
+        latestEpisodeAnimes: [],
+        spotlightAnimes: [],
+        top10Animes: {
+          today: [],
+          month: [],
+          week: []
+        },
+        topAiringAnimes: [],
+        topUpcomingAnimes: [],
+        trendingAnimes: [],
+        mostPopularAnimes: [],
+        mostFavoriteAnimes: [],
+        latestCompletedAnimes: [],
+        scheduledAnimes: [], // New data property for scheduled anime
+        searchQuery: '',
+        searchResults: {
+          animes: [],
+          currentPage: 1,
+          totalPages: 1,
+          hasNextPage: false,
+          searchQuery: '',
+          searchFilters: {}
+        },
+        suggestions: [],
+        showSuggestions: false,
+        hasSearchResults: false,
+        scheduleDate: new Date().toISOString().slice(0, 10), // Default to today's date
+        showEpisodeList: false,
+        episodeList: {
+          episodes: [],
+          totalEpisodes: 0
+        },
+        currentAnimeName: '',
+        episodeServers: {
+          sub: [],
+          dub: [],
+          raw: []
+        },
+        showServers: false,
+        serverId: null,
+        animeUrl: null,
+        animeDetails: null,
+        animeId: null
       },
       mounted() {
-        this.fetchAnimeDetails();
+        this.fetchData();
+      },
+      watch: {
+        // no search query changes
       },
       methods: {
+        async fetchData() {
+          try {
+            const response = await fetch('/api/v2/hianime/home');
+            const data = await response.json();
+            console.log(data);
+
+            if (data.success) {
+              this.genres = data.data.genres;
+              this.latestEpisodeAnimes = data.data.latestEpisodeAnimes;
+              this.spotlightAnimes = data.data.spotlightAnimes;
+              this.top10Animes.today = data.data.top10Animes.today;
+              this.top10Animes.month = data.data.top10Animes.month;
+              this.top10Animes.week = data.data.top10Animes.week;
+              this.topAiringAnimes = data.data.topAiringAnimes;
+              this.topUpcomingAnimes = data.data.topUpcomingAnimes;
+              this.trendingAnimes = data.data.trendingAnimes;
+              this.mostPopularAnimes = data.data.mostPopularAnimes;
+              this.mostFavoriteAnimes = data.data.mostFavoriteAnimes;
+              this.latestCompletedAnimes = data.data.latestCompletedAnimes;
+            }
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          } finally {
+            this.loading = false;
+          }
+        },
+        async fetchSuggestions() {
+          if (this.searchQuery.length > 2) {
+            try {
+              const response = await fetch(`/api/v2/hianime/search/suggestion?q=${this.searchQuery}`);
+              const data = await response.json();
+              console.log(data);
+              this.suggestions = data.data.suggestions;
+              this.showSuggestions = true;
+            } catch (error) {
+              console.error('Error fetching suggestions:', error);
+            }
+          } else {
+            this.suggestions = [];
+            this.showSuggestions = false;
+          }
+        },
+        selectSuggestion(suggestion) {
+          this.searchQuery = suggestion.name;
+          this.suggestions = [];
+          this.showSuggestions = false;
+          // You might want to trigger a search here
+          // this.fetchSearchResults();
+        },
+        async performSearch() {
+          if (this.searchQuery) {
+            this.loading = true;
+            this.hasSearchResults = false;
+
+            try {
+              const response = await fetch(`/api/v2/hianime/search?q=${this.searchQuery}`);
+              const data = await response.json();
+              console.log(data);
+              this.searchResults = data.data;
+              if (this.searchResults && this.searchResults.animes.length > 0) {
+                this.hasSearchResults = true;
+              }
+            } catch (error) {
+              console.error('Error fetching search results:', error);
+            } finally {
+              this.loading = false;
+            }
+          }
+        },
+        async fetchProducerAnimes(producerName, page = 1) {
+          try {
+            const response = await fetch(`/api/v2/hianime/producer/${producerName}?page=${page}`);
+            const data = await response.json();
+            console.log(data);
+            // Handle the response data here
+            // ...
+          } catch (error) {
+            console.error('Error fetching producer animes:', error);
+          }
+        },
+        async fetchGenreAnimes(genreName, page = 1) {
+          try {
+            const response = await fetch(`/api/v2/hianime/genre/${genreName}?page=${page}`);
+            const data = await response.json();
+            console.log(data);
+            // Handle the response data here
+            // ...
+          } catch (error) {
+            console.error('Error fetching genre animes:', error);
+          }
+        },
+        async fetchCategoryAnimes(categoryName, page = 1) {
+          try {
+            const response = await fetch(`/api/v2/hianime/category/${categoryName}?page=${page}`);
+            const data = await response.json();
+            console.log(data);
+            // Handle the response data here
+            // ...
+          } catch (error) {
+            console.error('Error fetching category animes:', error);
+          }
+        },
+        async fetchAnimeSchedule() {
+          try {
+            const response = await fetch(`/api/v2/hianime/schedule?date=${this.scheduleDate}`);
+            const data = await response.json();
+            console.log(data);
+            if (data.success) {
+              this.scheduledAnimes = data.data.scheduledAnimes;
+            }
+          } catch (error) {
+            console.error('Error fetching anime schedule:', error);
+          }
+        },
+        async fetchEpisodeList(animeId) {
+          try {
+            const response = await fetch(`/api/v2/hianime/anime/${animeId}/episodes`);
+            const data = await response.json();
+            console.log(data);
+            if (data.success) {
+              this.episodeList = data.data;
+              this.showEpisodeList = true;
+              const anime = this.searchResults.animes.find(a => a.id === animeId) || this.latestEpisodeAnimes.find(a => a.id === animeId) || this.spotlightAnimes.find(a => a.id === animeId) || this.top10Animes.today.find(a => a.id === animeId) || this.top10Animes.month.find(a => a.id === animeId) || this.top10Animes.week.find(a => a.id === animeId) || this.topAiringAnimes.find(a => a.id === animeId) || this.topUpcomingAnimes.find(a => a.id === animeId) || this.trendingAnimes.find(a => a.id === animeId) || this.mostPopularAnimes.find(a => a.id === animeId) || this.mostFavoriteAnimes.find(a => a.id === animeId) || this.latestCompletedAnimes.find(a => a.id === animeId);
+              if (anime) {
+                this.currentAnimeName = anime.name;
+              }
+            }
+          } catch (error) {
+            console.error('Error fetching episode list:', error);
+          }
+        },
+        async fetchEpisodeServers(episodeId) {
+          try {
+            const response = await fetch(`/api/v2/hianime/episode/servers?animeEpisodeId=${episodeId}`);
+            const data = await response.json();
+            console.log(data);
+            if (data.success) {
+              this.episodeServers = data.data;
+              this.showServers = true;
+            }
+          } catch (error) {
+            console.error('Error fetching episode servers:', error);
+          }
+        },
+        async selectServerAndPlay(serverId, category) {
+          try {
+            this.serverId = serverId;
+            const response = await fetch(`/api/v2/hianime/episode/sources?animeEpisodeId=${this.episodeServers.episodeId}&server=hd-1&category=${category}`);
+            const data = await response.json();
+            console.log(data);
+            if (data.success) {
+              const sources = data.data.sources;
+              const headers = data.data.headers;
+              this.animeUrl = sources.find(source => source.isM3U8).url;
+              // Add headers for the iframe
+              this.animeUrl = `${this.animeUrl}?${Object.entries(headers).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&')}`;
+            }
+          } catch (error) {
+            console.error('Error fetching episode sources:', error);
+          }
+        },
         fetchAnimeDetails() {
           this.animeId = new URLSearchParams(window.location.search).get('id');
           if (this.animeId) {
-            fetch(`/api/v2/hianime/anime/${this.animeId}`) // Removed the headers section
+            fetch(`/api/v2/hianime/anime/${this.animeId}`)
               .then(response => response.json())
               .then(data => {
                 if (data.success) {
-                  this.animeDetails = data.data;
+                  this.animeDetails = data.data.anime[0].info;
                   console.log(this.animeDetails);
                 } else {
                   console.log('Could not fetch anime details.');
@@ -114,21 +587,8 @@
                 this.loading = false;
               });
           }
-        },
-         async fetchEpisodeList(animeId) {
-          try {
-            const response = await fetch(`/api/v2/hianime/anime/${animeId}/episodes`); // Removed the headers section
-            const data = await response.json();
-            console.log(data);
-            if (data.success) {
-              this.episodeList = data.data;
-              console.log(this.episodeList);
-            }
-          } catch (error) {
-            console.error('Error fetching episode list:', error);
-          }
-        },
-      },
+        }
+      }
     });
   </script>
 </body>
