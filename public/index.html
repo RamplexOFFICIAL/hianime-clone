@@ -390,6 +390,17 @@
           } catch (error) {
             console.error('Error fetching genre animes:', error);
           }
+        },
+        async fetchCategoryAnimes(categoryName, page = 1) {
+          try {
+            const response = await fetch(`/api/v2/hianime/category/${categoryName}?page=${page}`);
+            const data = await response.json();
+            console.log(data);
+            // Handle the response data here
+            // ...
+          } catch (error) {
+            console.error('Error fetching category animes:', error);
+          }
         }
       }
     });
