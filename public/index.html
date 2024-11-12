@@ -179,6 +179,17 @@
       overflow-y: auto; /* Enable vertical scroll if content exceeds height */
     }
 
+    .watch-now-section .episode-list li {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .watch-now-section .episode-list li:hover {
+      background-color: #f0f0f0;
+    }
+
     .watch-now-section .servers-comments {
       height: 200px;
       overflow-y: auto;
@@ -556,7 +567,7 @@
         <div class="left-side">
           <h2 class="text-center">Episode List</h2>
           <ul class="episode-list" v-show="showEpisodeList">
-            <li v-for="(episode,index) in episodeList.episodes" :key="index" @click="fetchEpisodeServers(episode.episodeId)">
+            <li v-for="(episode,index) in episodeList.episodes" :key="index" @click="selectEpisode(episode)">
               {{ episode.number }}. {{ episode.title }}
             </li>
           </ul>
@@ -786,7 +797,6 @@
           try {
             const response = await fetch(`/api/v2/hianime/anime/${animeId}/episodes`);
             const data = await response.json();
-            console.log(data);
             if (data.success) {
               this.episodeList = data.data;
               this.showEpisodeList = true; // Show the episode list after fetching it
@@ -857,6 +867,10 @@
             { number: 3, title: 'A New Challenge' },
             // ... add more episodes
           ];
+        },
+        // New method to select an episode
+        selectEpisode(episode) {
+          this.fetchEpisodeServers(episode.episodeId);
         }
       }
     });
