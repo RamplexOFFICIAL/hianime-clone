@@ -8,155 +8,7 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
   <style>
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .anime-card {
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      overflow: hidden;
-      margin-bottom: 20px;
-      cursor: pointer; /* Add cursor to indicate clickable */
-      text-decoration: none; /* Remove default link underline */
-    }
-
-    .anime-card img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-    }
-
-    .anime-card .details {
-      padding: 15px;
-    }
-
-    .genre-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-bottom: 10px;
-    }
-
-    .genre-item {
-      background-color: #f0f0f0;
-      padding: 5px 10px;
-      border-radius: 5px;
-    }
-
-
-    .top-anime-charts {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-
-    .top-anime-chart {
-      width: calc(33.33% - 10px);
-    }
-
-    /* Styling for the suggestions dropdown */
-    .suggestions {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      width: 100%;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      z-index: 100;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-
-    .suggestion {
-      padding: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .suggestion:hover {
-      background-color: #f0f0f0;
-    }
-
-    /* Anime Details Section Styles */
-    .anime-details {
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .anime-details img {
-      width: 200px;
-      height: 300px;
-      object-fit: cover;
-      margin-right: 20px;
-    }
-
-    .anime-details .info {
-      flex-grow: 1;
-    }
-
-    .anime-details h2 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    .anime-details p {
-      margin-bottom: 5px;
-    }
-
-    .anime-details .genres {
-      margin-bottom: 10px;
-    }
-
-    .anime-details .genres span {
-      background-color: #f0f0f0;
-      padding: 5px 10px;
-      border-radius: 5px;
-      margin-right: 5px;
-    }
-
-    /* Hide anime details section initially */
-    .anime-details {
-      display: none;
-    }
-
-    .anime-details.show {
-      display: block;
-    }
-
-    /* Hide the home section when anime details are shown */
-    .home-section.hidden {
-      display: none;
-    }
-
-    /* Error Notification Styles */
-    #errorNotification {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #f44336; /* Red for error */
-      color: white;
-      padding: 20px;
-      border-radius: 5px;
-      z-index: 1000;
-      display: none;
-    }
-
-    #errorNotification button {
-      background-color: #fff;
-      color: #f44336;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 3px;
-      cursor: pointer;
-    }
-
+    /* ... (Previous styles) ... */
 
     /* Watch Now Section Styles */
     .watch-now-section {
@@ -574,20 +426,20 @@
         </div>
         <div class="right-side">
           <h2 class="text-center">Watch Now</h2>
-          <div class="servers-comments" v-show="showEpisodeList && episodeServers.episodeId">
+          <div class="servers-comments" v-show="showServers">
             <ul>
               <li v-for="(server, index) in episodeServers.sub" :key="index">
-                <button class="server-button" @click="selectServerAndPlay(server.serverId, 'sub')">
+                <button class="server-button" @click="selectServerAndPlay(server.serverId, 'sub'); showServers = false">
                   {{ server.serverName }}
                 </button>
               </li>
               <li v-for="(server, index) in episodeServers.dub" :key="index">
-                <button class="server-button" @click="selectServerAndPlay(server.serverId, 'dub')">
+                <button class="server-button" @click="selectServerAndPlay(server.serverId, 'dub'); showServers = false">
                   {{ server.serverName }}
                 </button>
               </li>
               <li v-for="(server, index) in episodeServers.raw" :key="index">
-                <button class="server-button" @click="selectServerAndPlay(server.serverId, 'raw')">
+                <button class="server-button" @click="selectServerAndPlay(server.serverId, 'raw'); showServers = false">
                   {{ server.serverName }}
                 </button>
               </li>
@@ -861,12 +713,7 @@
         populateEpisodesInSection3() {
           // You can fetch from API or use a hardcoded example for now
           // Example using hardcoded data
-          this.episodesInSection3 = [
-            { number: 1, title: 'The Beginning' },
-            { number: 2, title: 'The Journey Begins' },
-            { number: 3, title: 'A New Challenge' },
-            // ... add more episodes
-          ];
+          // ... add more episodes
         },
         // New method to select an episode
         selectEpisode(episode) {
