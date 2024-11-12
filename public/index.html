@@ -504,7 +504,7 @@
               {{ genre }}
             </span>
           </div>
-          <button @click="fetchEpisodeList(currentAnime.id); showAnimeDetailsSection = false; showSection3 = true" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <button @click="fetchEpisodeList(currentAnime.id)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Watch Now
           </button>
         </div>
@@ -762,6 +762,7 @@
           try {
             const response = await fetch(`/api/v2/hianime/category/${categoryName}?page=${page}`);
             const data = await response.json();
+            console.log(data);
             // Handle the response data here
             // ...
           } catch (error) {
@@ -789,6 +790,11 @@
             console.log(data);
             if (data.success) {
               this.episodeList = data.data;
+              // Now, fetch the episode servers for the first episode
+              if (this.episodeList.episodes.length > 0) {
+                this.fetchEpisodeServers(this.episodeList.episodes[0].episodeId); // Fetch for the first episode
+              }
+
               this.showEpisodeList = true; // Show the episode list after fetching it
               const anime = this.searchResults.animes.find(a => a.id === animeId) || this.latestEpisodeAnimes.find(a => a.id === animeId) || this.spotlightAnimes.find(a => a.id === animeId) || this.top10Animes.today.find(a => a.id === animeId) || this.top10Animes.month.find(a => a.id === animeId) || this.top10Animes.week.find(a => a.id === animeId) || this.topAiringAnimes.find(a => a.id === animeId) || this.topUpcomingAnimes.find(a => a.id === animeId) || this.trendingAnimes.find(a => a.id === animeId) || this.mostPopularAnimes.find(a => a.id === animeId) || this.mostFavoriteAnimes.find(a => a.id === animeId) || this.latestCompletedAnimes.find(a => a.id === animeId);
               if (anime) {
