@@ -145,7 +145,7 @@
       padding: 20px;
       border-radius: 5px;
       z-index: 1000;
-      display: none;
+      display: none; /* Hidden by default */
     }
 
     #errorNotification button {
@@ -552,42 +552,41 @@
     </div>
 
     <div class="section-3" :class="{ show: showSection3 }">
+      <h2 class="text-center">Watch Now</h2>
       <div class="watch-now-section">
         <div class="left-side">
-          <h2 class="text-center">Episode List</h2>
-          <ul class="episode-list" v-show="showEpisodeList">
-            <li v-for="(episode,index) in episodeList.episodes" :key="index" @click="fetchEpisodeServers(episode.id)">
-              {{ episode.number }}. {{ episode.subTitle }}
-            </li>
-          </ul>
-        </div>
-        <div class="right-side">
-          <h2 class="text-center">Watch Now</h2>
-          <div class="servers-comments" v-show="showEpisodeList && episodeServers.episodeId">
+
+          <div class="episode-list">
             <ul>
-              <li v-for="(server, index) in episodeServers.sub" :key="index">
-                <button class="server-button" @click="selectServerAndPlay(server.serverId, 'sub')">
-                  {{ server.serverName }}
-                </button>
-              </li>
-              <li v-for="(server, index) in episodeServers.dub" :key="index">
-                <button class="server-button" @click="selectServerAndPlay(server.serverId, 'dub')">
-                  {{ server.serverName }}
-                </button>
-              </li>
-              <li v-for="(server, index) in episodeServers.raw" :key="index">
-                <button class="server-button" @click="selectServerAndPlay(server.serverId, 'raw')">
-                  {{ server.serverName }}
-                </button>
+              <li v-for="episode in episodeList.episodes" :key="episode.number"
+                  @click="fetchEpisodeServers(episode.id)" class="cursor-pointer">
+                {{ episode.number }}. {{ episode.title }}
               </li>
             </ul>
           </div>
-          <iframe v-show="animeUrl" class="video-player" :src="animeUrl" frameborder="0" allowfullscreen></iframe>
+          <div class="servers-comments">
+            <ul>
+              <li v-for="(categoryServers, category) in episodeServers" :key="category">
+                <h3>{{ category }}</h3>
+                <ul>
+                  <li v-for="server in categoryServers" :key="server.serverId">
+                    <button class="server-button" @click="selectServerAndPlay(server.serverId, category)">
+                      {{ server.serverName }}
+                    </button>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
         </div>
+        <div class="right-side">
+          <div class="video-player">
+            <iframe v-if="animeUrl" :src="animeUrl" frameborder="0" allowfullscreen></iframe>
+          </div>
+        </div>
+
       </div>
-      <button @click="showSection3 = false; showAnimeDetailsSection = true" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-        Go Back
-      </button>
+      <button @click="showSection3 = false">Go Back</button>
     </div>
 
   </div>
@@ -787,13 +786,14 @@
           try {
             const response = await fetch(`/api/v2/hianime/anime/${animeId}/episodes`);
             const data = await response.json();
-            console.log(data);
             if (data.success) {
               this.episodeList = data.data;
-              this.showEpisodeList = true; // Show the episode list after fetching it
+              // Here we need to update the data about the anime based on the episode list 
               const anime = this.searchResults.animes.find(a => a.id === animeId) || this.latestEpisodeAnimes.find(a => a.id === animeId) || this.spotlightAnimes.find(a => a.id === animeId) || this.top10Animes.today.find(a => a.id === animeId) || this.top10Animes.month.find(a => a.id === animeId) || this.top10Animes.week.find(a => a.id === animeId) || this.topAiringAnimes.find(a => a.id === animeId) || this.topUpcomingAnimes.find(a => a.id === animeId) || this.trendingAnimes.find(a => a.id === animeId) || this.mostPopularAnimes.find(a => a.id === animeId) || this.mostFavoriteAnimes.find(a => a.id === animeId) || this.latestCompletedAnimes.find(a => a.id === animeId);
+
               if (anime) {
-                this.currentAnimeName = anime.name;
+                anime.episodes.sub = this.episodeList.totalEpisodes;
+                anime.episodes.dub = this.episodeList.totalEpisodes; // Assuming dub is the same, this should be dynamic 
               }
             }
           } catch (error) {
@@ -808,7 +808,6 @@
             console.log(data);
             if (data.success) {
               this.episodeServers = data.data;
-              this.showServers = true;
             }
           } catch (error) {
             this.showErrorNotification('Error fetching episode servers: ' + error.message);
