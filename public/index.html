@@ -571,10 +571,7 @@
               {{ episode.number }}. {{ episode.title }}
             </li>
           </ul>
-        </div>
-        <div class="right-side">
-          <h2 class="text-center">Watch Now</h2>
-          <div class="servers-comments" v-show="showEpisodeList && episodeServers.episodeId">
+          <div class="servers-comments" v-show="showServers">
             <ul>
               <li v-for="(server, index) in episodeServers.sub" :key="index">
                 <button class="server-button" @click="selectServerAndPlay(server.serverId, 'sub')">
@@ -593,7 +590,10 @@
               </li>
             </ul>
           </div>
-          <iframe v-show="animeUrl" class="video-player" :src="animeUrl" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="right-side">
+          <h2 class="text-center">Watch Now</h2>
+          <iframe v-show="animeUrl" class="video-player" :src="animeUrl" frameborder="0" allowfullscreen autoplay></iframe>
         </div>
       </div>
       <button @click="showSection3 = false; showAnimeDetailsSection = true" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
