@@ -661,6 +661,7 @@
       },
       mounted() {
         this.fetchData();
+        this.checkLastViewedEpisode();
         this.$watch('showSection3', (val) => {
           if (val) { // Show Section 3
             this.$nextTick(() => {
@@ -773,6 +774,7 @@
           try {
             const response = await fetch(`/api/v2/hianime/category/${categoryName}?page=${page}`);
             const data = await response.json();
+            console.log(data);
             // Handle the response data here
             // ...
           } catch (error) {
@@ -869,9 +871,32 @@
           ];
         },
         // New method to select an episode
-        selectEpisode(episode) {
+        async selectEpisode(episode) {
+          this.episodeServers.episodeId = episode.episodeId;
           this.fetchEpisodeServers(episode.episodeId);
-        }
+          const response = await fetch(`/api/v2/hianime/episode/servers?animeEpisodeId=${episode.episodeId}`);
+          const data = await response.json();
+          console.log(data);
+          if (data.success) {
+            // Update the episode servers with the latest data
+            this.episodeServers = data.data;
+          } else {
+            this.showErrorNotification("Failed to fetch episode servers");
+          }
+          this.setEpisodeId(episode.episodeId);
+          this.showServers = true;
+        },
+        // Set the episode ID in local storage
+        setEpisodeId(episodeId){
+          localStorage.setItem('lastViewedEpisode', episodeId);
+        },
+        // Check for a last viewed episode in local storage
+        checkLastViewedEpisode() {
+          const lastViewedEpisode = localStorage.getItem('lastViewedEpisode');
+          if (lastViewedEpisode) {
+            this.selectEpisode({ episodeId: lastViewedEpisode }); // Load the last viewed episode
+          }
+        },
       }
     });
   </script>
