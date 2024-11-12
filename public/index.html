@@ -515,9 +515,9 @@
               {{ genre }}
             </span>
           </div>
-          <button @click="fetchEpisodeList(currentAnime.id); showAnimeDetailsSection = false; showSection3 = true" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <a :href="`/watch/${currentAnime.id}`" @click="fetchEpisodeList(currentAnime.id)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Watch Now
-          </button>
+          </a>
         </div>
       </div>
       <button @click="showAnimeDetailsSection = false" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
