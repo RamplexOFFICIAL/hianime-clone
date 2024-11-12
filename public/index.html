@@ -592,8 +592,14 @@
           </div>
         </div>
         <div class="right-side">
-          <h2 class="text-center">Watch Now</h2>
-          <iframe v-show="animeUrl" class="video-player" :src="animeUrl" frameborder="0" allowfullscreen autoplay></iframe>
+          <div v-show="animeUrl" class="video-player">
+            <iframe :src="animeUrl" frameborder="0" allowfullscreen autoplay></iframe>
+          </div>
+          <div v-show="!animeUrl" class="video-player">
+            <div class="h-full flex items-center justify-center">
+              <i class="material-icons text-gray-500 text-4xl">play_circle_filled</i>
+            </div>
+          </div>
         </div>
       </div>
       <button @click="showSection3 = false; showAnimeDetailsSection = true" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
