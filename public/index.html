@@ -214,17 +214,10 @@
     }
 
     .watch-now-section .video-player {
-      position: relative;
       height: 500px;
       overflow: hidden;
       border: 1px solid #ccc;
       border-radius: 8px;
-    }
-
-    .watch-now-section .video-player video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
     }
 
     /* Responsiveness for smaller screens */
@@ -300,126 +293,12 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
-    /* Advanced Video Player Styles */
-    .video-container {
-      position: relative;
-      width: 800px;
-      height: 450px;
-      margin: 0 auto;
-    }
-
-    video {
-      width: 100%;
-      height: 100%;
-      border-radius: 10px;
-    }
-
-    .controls {
-      position: absolute;
-      bottom: 10px;
-      left: 10px;
-      right: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: rgba(0, 0, 0, 0.5);
-      padding: 10px;
-      border-radius: 10px;
-    }
-
-    .controls button {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 20px;
-      cursor: pointer;
-      margin: 0 10px;
-    }
-
-    .controls button:hover {
-      opacity: 0.8;
-    }
-
-    .controls .progress {
-      width: 500px;
-      height: 6px;
-      background-color: #ddd;
-      border-radius: 5px;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .controls .progress .filled {
-      position: absolute;
-      height: 100%;
-      background-color: #4CAF50;
-      border-radius: 5px;
-      width: 0%;
-      transition: width 0.3s ease;
-    }
-
-    .controls .time {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .controls .time span {
-      color: white;
-    }
-
-    .controls .volume {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .controls .volume input[type="range"] {
-      -webkit-appearance: none;
-      width: 80px;
-      height: 6px;
-      background: #ddd;
-      outline: none;
-      opacity: 0.7;
-      transition: opacity 0.2s;
-    }
-
-    .controls .volume input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 15px;
-      height: 15px;
-      background: #fff;
-      cursor: pointer;
-      border-radius: 50%;
-    }
-
-    .controls .volume input[type="range"]:hover {
-      opacity: 1;
-    }
-
-    .controls .speed-control {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .controls .speed-control input[type="number"] {
-      width: 50px;
-      text-align: center;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      padding: 5px;
-      color: white;
-      background-color: rgba(0, 0, 0, 0.5);
-    }
   </style>
 </head>
 <body>
   <div id="app" class="container">
     <div class="flex items-center mb-4">
-      <i class="material-icons text-gray-500 cursor-pointer" v-on:click="adminMode = !adminMode">admin_panel_settings</i>
+      <i class="material-icons text-gray-500 cursor-pointer" @click="adminMode = !adminMode">admin_panel_settings</i>
       <h1 class="text-3xl font-bold ml-4 text-center">Aniwatch Anime Viewer</h1>
     </div>
 
@@ -628,27 +507,27 @@
         <img :src="currentAnime.poster" alt="Anime Poster">
         <div class="info ml-4">
           <h2>{{ currentAnime.name }}</h2>
-          <p v-show="currentAnime.jname">Japanese Name: {{ currentAnime.jname }}</p>
-          <p v-show="currentAnime.description">Description: {{ currentAnime.description }}</p>
+          <p v-if="currentAnime.jname">Japanese Name: {{ currentAnime.jname }}</p>
+          <p v-if="currentAnime.description">Description: {{ currentAnime.description }}</p>
           <div class="genres">
             Genres:
             <span v-for="genre in currentAnime.genres" :key="genre">
               {{ genre }}
             </span>
           </div>
-          <button v-on:click="fetchEpisodeList(currentAnime.id); showAnimeDetailsSection = false; showSection3 = true" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <button @click="fetchEpisodeList(currentAnime.id); showAnimeDetailsSection = false; showSection3 = true" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Watch Now
           </button>
         </div>
       </div>
-      <button v-on:click="showAnimeDetailsSection = false" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+      <button @click="showAnimeDetailsSection = false" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
         Back to Home
       </button>
     </div>
 
     <div id="errorNotification" v-show="showError">
       <p>{{ errorMessage }}</p>
-      <button v-on:click="closeErrorNotification">Close</button>
+      <button @click="closeErrorNotification">Close</button>
     </div> 
 
     <div class="admin-modal" v-show="adminMode">
@@ -673,7 +552,7 @@
           <label for="payload">Payload (JSON):</label>
           <textarea id="payload" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"></textarea>
         </div>
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="sendRequest">
           Send Request
         </button>
         <div id="response-section">
@@ -688,24 +567,24 @@
         <div class="left-side">
           <h2 class="text-center">Episode List</h2>
           <ul class="episode-list" v-show="showEpisodeList">
-            <li v-for="(episode,index) in episodeList.episodes" :key="index" v-on:click="selectEpisode(episode)">
+            <li v-for="(episode,index) in episodeList.episodes" :key="index" @click="selectEpisode(episode)">
               {{ episode.number }}. {{ episode.title }}
             </li>
           </ul>
           <div class="servers-comments" v-show="showServers">
             <ul>
               <li v-for="(server, index) in episodeServers.sub" :key="index">
-                <button class="server-button" v-on:click="selectServerAndPlay(server.serverId, 'sub')">
+                <button class="server-button" @click="selectServerAndPlay(server.serverId, 'sub')">
                   {{ server.serverName }}
                 </button>
               </li>
               <li v-for="(server, index) in episodeServers.dub" :key="index">
-                <button class="server-button" v-on:click="selectServerAndPlay(server.serverId, 'dub')">
+                <button class="server-button" @click="selectServerAndPlay(server.serverId, 'dub')">
                   {{ server.serverName }}
                 </button>
               </li>
               <li v-for="(server, index) in episodeServers.raw" :key="index">
-                <button class="server-button" v-on:click="selectServerAndPlay(server.serverId, 'raw')">
+                <button class="server-button" @click="selectServerAndPlay(server.serverId, 'raw')">
                   {{ server.serverName }}
                 </button>
               </li>
@@ -714,120 +593,16 @@
         </div>
         <div class="right-side">
           <div v-show="animeUrl" class="video-player">
-            <div class="video-container">
-              <video id="myVideo" controls>
-                <source :src="animeUrl" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-              <div class="controls">
-                <button id="play-pause" title="Play/Pause">
-                  <i class="material-icons">play_arrow</i>
-                </button>
-                <button id="mute" title="Mute/Unmute">
-                  <i class="material-icons">volume_up</i>
-                </button>
-                <div class="volume">
-                  <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
-                </div>
-                <div class="progress">
-                  <div class="filled"></div>
-                </div>
-                <div class="time">
-                  <span id="current-time">0:00</span> / <span id="duration">0:00</span>
-                </div>
-                <div class="speed-control">
-                  <label for="speed">Speed:</label>
-                  <input type="number" id="speed" min="0.25" max="4" step="0.25" value="1">
-                </div>
-              </div>
-            </div>
-            <script>
-              const video = document.getElementById("myVideo");
-              const playPauseButton = document.getElementById("play-pause");
-              const muteButton = document.getElementById("mute");
-              const volumeSlider = document.getElementById("volume-slider");
-              const progress = document.querySelector(".progress");
-              const filled = document.querySelector(".filled");
-              const currentTime = document.getElementById("current-time");
-              const duration = document.getElementById("duration");
-              const speedInput = document.getElementById("speed");
-
-              let isPlaying = false;
-              let isMuted = false;
-
-              // Play/Pause
-              playPauseButton.addEventListener("click", () => {
-                if (isPlaying) {
-                  video.pause();
-                  playPauseButton.innerHTML = '<i class="material-icons">play_arrow</i>';
-                } else {
-                  video.play();
-                  playPauseButton.innerHTML = '<i class="material-icons">pause</i>';
-                }
-                isPlaying = !isPlaying;
-              });
-
-              // Mute/Unmute
-              muteButton.addEventListener("click", () => {
-                if (isMuted) {
-                  video.muted = false;
-                  muteButton.innerHTML = '<i class="material-icons">volume_up</i>';
-                } else {
-                  video.muted = true;
-                  muteButton.innerHTML = '<i class="material-icons">volume_off</i>';
-                }
-                isMuted = !isMuted;
-              });
-
-              // Volume Control
-              volumeSlider.addEventListener("input", () => {
-                video.volume = volumeSlider.value;
-                if (video.muted) {
-                  muteButton.innerHTML = '<i class="material-icons">volume_off</i>';
-                } else {
-                  muteButton.innerHTML = '<i class="material-icons">volume_up</i>';
-                }
-              });
-
-              // Progress Bar
-              video.addEventListener("timeupdate", () => {
-                const percentage = (video.currentTime / video.duration) * 100;
-                filled.style.width = percentage + "%";
-                currentTime.textContent = formatTime(video.currentTime);
-              });
-
-              progress.addEventListener("click", (event) => {
-                const clickedPosition = event.offsetX;
-                const percentage = (clickedPosition / progress.offsetWidth) * 100;
-                video.currentTime = (percentage / 100) * video.duration;
-              });
-
-              // Update Duration
-              video.addEventListener("loadedmetadata", () => {
-                duration.textContent = formatTime(video.duration);
-              });
-
-              // Speed Control
-              speedInput.addEventListener("change", () => {
-                video.playbackRate = speedInput.value;
-              });
-
-              // Time Formatting Helper
-              function formatTime(seconds) {
-                const minutes = Math.floor(seconds / 60);
-                const remainingSeconds = Math.floor(seconds % 60);
-                return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
-              }
-            </script>
+            <iframe :src="animeUrl" frameborder="0" allowfullscreen autoplay></iframe>
           </div>
           <div v-show="!animeUrl" class="video-player">
             <div class="h-full flex items-center justify-center">
               <i class="material-icons text-gray-500 text-4xl">play_circle_filled</i>
             </div>
           </div>
-        </div>
+        </div> 
       </div>
-      <button v-on:click="showSection3 = false; showAnimeDetailsSection = true" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+      <button @click="showSection3 = false; showAnimeDetailsSection = true" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
         Go Back
       </button>
     </div>
@@ -1047,7 +822,6 @@
           try {
             const response = await fetch(`/api/v2/hianime/episode/servers?animeEpisodeId=${episodeId}`);
             const data = await response.json();
-            console.log(data);
             if (data.success) {
               this.episodeServers = data.data;
               this.showServers = true;
@@ -1060,13 +834,24 @@
         async selectServerAndPlay(serverId, category) {
           try {
             this.serverId = serverId;
-            const response = await fetch(`/api/v2/hianime/episode/sources?animeEpisodeId=${this.episodeServers.episodeId}&server=${serverId}&category=${category}`);
-            const data = await response.json();
-            console.log(data);
-            if (data.success) {
-              const sources = data.data.sources;
-              const headers = data.data.headers;
-              this.animeUrl = sources.find(source => source.isM3U8).url;
+            // Get the episode ID
+            const episodeId = this.episodeServers.episodeId;
+
+            // Fetch sources for the episode
+            const response = await fetch(`/api/v2/hianime/episode/sources?animeEpisodeId=${episodeId}&server=${serverId}&category=${category}`);
+            const data = await response.json(); // This returns the necessary data
+            console.log(data); //  View response for your understanding
+  
+            // Fetch the data needed to build the iframe source
+            const sources = data.data.sources;
+            const headers = data.data.headers;
+  
+            // Find the M3U8 source
+            const m3u8Source = sources.find(source => source.isM3U8);
+  
+            // If an M3U8 source is found, set the iframe source with headers
+            if (m3u8Source) {
+              this.animeUrl = m3u8Source.url;
               // Add headers for the iframe
               this.animeUrl = `${this.animeUrl}?${Object.entries(headers).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&')}`;
             }
@@ -1109,7 +894,6 @@
           const data = await response.json();
           console.log(data);
           if (data.success) {
-            // Update the episode servers with the latest data
             this.episodeServers = data.data;
           } else {
             this.showErrorNotification("Failed to fetch episode servers");
@@ -1128,6 +912,36 @@
             this.selectEpisode({ episodeId: lastViewedEpisode }); // Load the last viewed episode
           }
         },
+        async sendRequest() {
+          const apiKey = document.getElementById('api-key').value;
+          const endpoint = document.getElementById('endpoint').value;
+          const requestType = document.getElementById('request-type').value;
+          const payload = document.getElementById('payload').value;
+  
+          try {
+            let response;
+            if (requestType === 'GET') {
+              response = await fetch(`${endpoint}${apiKey ? `?api_key=${apiKey}` : ''}`);
+            } else if (requestType === 'POST') {
+              response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: payload
+              });
+            }
+  
+            if (response.ok) {
+              const data = await response.json();
+              document.getElementById('response-content').textContent = JSON.stringify(data, null, 2);
+            } else {
+              document.getElementById('response-content').textContent = 'Error: ' + response.status;
+            }
+          } catch (error) {
+            document.getElementById('response-content').textContent = 'Error: ' + error.message;
+          }
+        }
       }
     });
   </script>
