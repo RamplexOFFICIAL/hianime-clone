@@ -515,7 +515,7 @@
               {{ genre }}
             </span>
           </div>
-          <a :href="`/watch/${currentAnime.id}`" @click="fetchEpisodeList(currentAnime.id)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <a :href="`/watch/${currentAnime.id}`" :target="`_blank`" @click="fetchEpisodeList(currentAnime.id)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Watch Now
           </a>
         </div>
