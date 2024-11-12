@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aniwatch - Watch Now</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <style>
+    /* ... (You can include styles here or link to external CSS) */
+  </style>
+</head>
+<body>
+  <div id="watch-app">
+    <div v-if="loading">
+      Loading...
+    </div>
+
+    <div v-else>
+      <div v-if="episodeList && episodeList.episodes.length > 0">
+        <h2>{{ animeName }} - Episode List</h2>
+        <ul>
+          <li v-for="(episode, index) in episodeList.episodes" :key="index" @click="selectEpisode(episode)">
+            {{ episode.number }}. {{ episode.title }}
+          </li>
+        </ul>
+      </div>
+      <div v-if="showServers">
+        <h3>Servers</h3>
+        <ul>
+          <li v-for="(server, index) in episodeServers.sub" :key="index">
+            <button @click="selectServerAndPlay(server.serverId, 'sub')">
+              {{ server.serverName }}
+            </button>
+          </li>
+          <li v-for="(server, index) in episodeServers.dub" :key="index">
+            <button @click="selectServerAndPlay(server.serverId, 'dub')">
+              {{ server.serverName }}
+            </button>
+          </li>
+          <li v-for="(server, index) in episodeServers.raw" :key="index">
+            <button @click="selectServerAndPlay(server.serverId, 'raw')">
+              {{ server.serverName }}
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div v-if="animeUrl">
+        <iframe :src="animeUrl" frameborder="0" allowfullscreen autoplay></iframe>
+      </div>
+      <div v-else>
+        <p>Select an episode and a server to begin watching.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#watch-app',
+      data() {
+        return {
+          loading: true,
+          animeName: '',
+          episodeList: null,
+          episodeServers: {
+            sub: [],
+            dub: [],
+            raw: []
+          },
+          showServers: false,
+          animeUrl: null,
+          animeId: null
+        };
+      },
+      mounted() {
+        this.fetchAnimeData();
+      },
+      methods: {
+        async fetchAnimeData() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const animeId = urlParams.get('id');
+          this.animeId = animeId;
+
+          if (animeId) {
+            try {
+              const response = await fetch(`/api/v2/hianime/anime/${animeId}/episodes`);
+              const data = await response.json();
+
+              if (data.success) {
+                this.episodeList = data.data;
+
+                const anime = await fetch('/api/v2/hianime/anime/' + animeId)
+                    .then(res => res.json());
+                this.animeName = anime.data.name
+              }
+            } catch (error) {
+              console.error('Error fetching anime data:', error); 
+            } finally {
+              this.loading = false;
+            }
+          }
+        },
+        async fetchEpisodeServers(episodeId) {
+          try {
+            const response = await fetch(`/api/v2/hianime/episode/servers?animeEpisodeId=${episodeId}`);
+            const data = await response.json();
+            if (data.success) {
+              this.episodeServers = data.data;
+              this.showServers = true;
+            }
+          } catch (error) {
+            console.error('Error fetching episode servers:', error);
+          }
+        },
+        async selectServerAndPlay(serverId, category) {
+          try {
+            const episodeId = this.episodeServers.episodeId;
+
+
+            const response = await fetch(`/api/v2/hianime/episode/sources?animeEpisodeId=${episodeId}&server=${serverId}&category=${category}`);
+            const data = await response.json(); 
+
+            const sources = data.data.sources;
+            const headers = data.data.headers;
+
+            const m3u8Source = sources.find(source => source.isM3U8);
+
+            if (m3u8Source) {
+              this.animeUrl = m3u8Source.url;
+              this.animeUrl = `${this.animeUrl}?${Object.entries(headers).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&')}`;
+            }
+          } catch (error) {
+            console.error('Error fetching episode sources:', error);
+          }
+        },
+        async selectEpisode(episode) {
+          this.episodeServers.episodeId = episode.episodeId;
+          this.fetchEpisodeServers(episode.episodeId);
+          this.showServers = true;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
